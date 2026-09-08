@@ -39,3 +39,5 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: ch.weinkeller.app
         SWIFT_EMIT_LOC_STRINGS: YES
         PRODUCT_NAME: Weinkeller
+        INFOPLIST_KEY_CFBundleDisplayName: Vinello
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon

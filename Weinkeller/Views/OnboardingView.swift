@@ -291,6 +291,6 @@ struct OnboardingView: View {
 
 /// Name und Untertitel an einer Stelle — damit ein Namenswechsel eine Zeile ist.
 enum AppInfo {
-    static let name = "Weinkeller"
-    static let tagline = "Dein Keller auf dem Handy.\nWelche Flasche wo liegt, und wann sie so weit ist."
+    static let name = "Vinello"
+    static let tagline = "Dein Weinkeller auf dem Handy.\nWelche Flasche wo liegt, und wann sie so weit ist."
 }
