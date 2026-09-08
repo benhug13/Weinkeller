@@ -1,6 +1,8 @@
 .DS_Store
 build/
 DerivedData/
-*.xcodeproj
+# Die Projektdatei liegt bewusst MIT im Repo: Xcode Cloud sucht sie beim Einrichten
+# und findet sonst kein Projekt. ci_scripts/ci_post_clone.sh erzeugt sie vor jedem
+# Build ohnehin neu aus project.yml, sie kann also nicht veralten.
 *.xcworkspace
 BuildNumber.xcconfig

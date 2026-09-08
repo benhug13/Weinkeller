@@ -1,0 +1,389 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		035F39F749787BA708B99584 /* GlassTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EB50D246463D5AD0C4527FA /* GlassTabBar.swift */; };
+		10B409C39D91AB8740260F2D /* Cards.swift in Sources */ = {isa = PBXBuildFile; fileRef = B187083F2A42DFA46A58E95D /* Cards.swift */; };
+		1BC8DDD955E0DDA80C1CB311 /* DrinkWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7072170A8B2C96377555C732 /* DrinkWindow.swift */; };
+		2112C87E6C10ADEA67B42731 /* FridgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F985B63BAACDA13EED72FBCD /* FridgeView.swift */; };
+		2A3096C535D94ADFD5F9F845 /* CatalogWine.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFD845DC680D2D7E30BA0679 /* CatalogWine.swift */; };
+		2CF1E4FCED606AA6629B3E53 /* WineDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23FDE5669D3B4E91FDAADAD3 /* WineDetailView.swift */; };
+		2E295A6793CB4070A14BE33F /* WineImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A69D54A6A9A4D4CAC6F1B /* WineImport.swift */; };
+		487B143F92B7B19BEC3A9189 /* TextMatching.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D51EA3DC409205D8CB5720 /* TextMatching.swift */; };
+		4DB46C30465F01391B5578EB /* WineType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B721A03A8142C5E0C2EEAB40 /* WineType.swift */; };
+		53961F4F0B89267FA5EEAB94 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 206050DD900C37A1C44ACADA /* Assets.xcassets */; };
+		547236C2EA0E627474966618 /* Backdrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CE98B297FEAA18A25F05A1C /* Backdrop.swift */; };
+		5582AE0C82189C5CF41A30E1 /* Bottle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A3ABECB8BEC85442714566 /* Bottle.swift */; };
+		56756128825130790D0236F3 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F186E83D5AB8046A8C36A650 /* OnboardingView.swift */; };
+		64FA90472EA2439E1B47441F /* ScanFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA0AAF50FEE1DA29A849E7D /* ScanFlowView.swift */; };
+		7070F9BA182C8069361C18CA /* UnplacedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39AFF5A4673BCC251AD60D1E /* UnplacedView.swift */; };
+		7EBE422D95F425D16D9EFBB3 /* Glass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 945723578E862123CB8AD0ED /* Glass.swift */; };
+		8A970F0354B62CAA7DD0B7B8 /* WeinkellerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D35BEA87BD4A8466894BDE /* WeinkellerApp.swift */; };
+		8EA641BC49CBDE75431E64E7 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8802FBFB82D3CDEE0B55F3F0 /* HomeView.swift */; };
+		9389B1606AFB338FA2CDF495 /* WineCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37FAFB49694BB81C753A61E6 /* WineCatalog.swift */; };
+		94021BA0B60CBF4E78F35CF7 /* Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF3B733F86F4DD71003829D /* Controls.swift */; };
+		991D91F0E7D33E750D9E1EAF /* catalog.json in Resources */ = {isa = PBXBuildFile; fileRef = C26C54532487D790459240CE /* catalog.json */; };
+		A0936312CA9D0D56836D9568 /* BarAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7918C0E4C438AB11BE23C3D9 /* BarAppearance.swift */; };
+		A50BC4F80824914AD5A7DA1A /* ImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E6780A17EA6D0A2F09B22B /* ImportView.swift */; };
+		A587878EEA36A401D260342D /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A46C0BAF6F35E6CA510E50D /* SettingsView.swift */; };
+		A873D2544DF5F4845F358E97 /* Fridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D68A122A6AA4574EA886E7 /* Fridge.swift */; };
+		ABA3105C198F41D88F8988EB /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A4AE2EBBF1A0851A29AA945 /* Theme.swift */; };
+		C0B1A60C37DEA6DE9C961BC1 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 486F76639A01379C1CE1BC7D /* RootView.swift */; };
+		C40C8DD929B0C1827D9CC2F9 /* DebugSeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595D7590A93753EAB687F6D1 /* DebugSeed.swift */; };
+		C5DDDEB444E4CF777B129747 /* ScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF7DD3E99CDC096EDE227C1 /* ScannerView.swift */; };
+		C68B8C92CD357CACF9C4F3D9 /* PlacePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1E6EBC0FD77F4E878755790 /* PlacePicker.swift */; };
+		D02A5F2954A18F9B45E9C022 /* CSV.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E79D6C866989C271F01D110 /* CSV.swift */; };
+		DCA5CF0550F8025BFF951547 /* WineListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67E88AFD8A6501E3762BEEC /* WineListView.swift */; };
+		EEA752071D8027C49C191B50 /* WineFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD6B113B2A47349863AB8D40 /* WineFormView.swift */; };
+		F8F8474D964D240F7599783C /* Wine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A82D1719078F99B66D3EC345 /* Wine.swift */; };
+		FF9E2CAACB8B1AFE6CBF13CF /* BottleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B1E5CA6A67C21451AB7191 /* BottleDetailView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		00B1E5CA6A67C21451AB7191 /* BottleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottleDetailView.swift; sourceTree = "<group>"; };
+		1A4AE2EBBF1A0851A29AA945 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		1EB50D246463D5AD0C4527FA /* GlassTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassTabBar.swift; sourceTree = "<group>"; };
+		206050DD900C37A1C44ACADA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		23FDE5669D3B4E91FDAADAD3 /* WineDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WineDetailView.swift; sourceTree = "<group>"; };
+		2E79D6C866989C271F01D110 /* CSV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSV.swift; sourceTree = "<group>"; };
+		3111F308677A8F526B8269D0 /* Weinkeller.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Weinkeller.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		37FAFB49694BB81C753A61E6 /* WineCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WineCatalog.swift; sourceTree = "<group>"; };
+		39AFF5A4673BCC251AD60D1E /* UnplacedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnplacedView.swift; sourceTree = "<group>"; };
+		486F76639A01379C1CE1BC7D /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		4BA0AAF50FEE1DA29A849E7D /* ScanFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanFlowView.swift; sourceTree = "<group>"; };
+		4CF3B733F86F4DD71003829D /* Controls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controls.swift; sourceTree = "<group>"; };
+		515A69D54A6A9A4D4CAC6F1B /* WineImport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WineImport.swift; sourceTree = "<group>"; };
+		595D7590A93753EAB687F6D1 /* DebugSeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugSeed.swift; sourceTree = "<group>"; };
+		5A46C0BAF6F35E6CA510E50D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		66D68A122A6AA4574EA886E7 /* Fridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fridge.swift; sourceTree = "<group>"; };
+		7072170A8B2C96377555C732 /* DrinkWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkWindow.swift; sourceTree = "<group>"; };
+		7918C0E4C438AB11BE23C3D9 /* BarAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarAppearance.swift; sourceTree = "<group>"; };
+		8802FBFB82D3CDEE0B55F3F0 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		88A3ABECB8BEC85442714566 /* Bottle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bottle.swift; sourceTree = "<group>"; };
+		945723578E862123CB8AD0ED /* Glass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glass.swift; sourceTree = "<group>"; };
+		98D35BEA87BD4A8466894BDE /* WeinkellerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeinkellerApp.swift; sourceTree = "<group>"; };
+		9CE98B297FEAA18A25F05A1C /* Backdrop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backdrop.swift; sourceTree = "<group>"; };
+		A1E6EBC0FD77F4E878755790 /* PlacePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacePicker.swift; sourceTree = "<group>"; };
+		A4E6780A17EA6D0A2F09B22B /* ImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportView.swift; sourceTree = "<group>"; };
+		A67E88AFD8A6501E3762BEEC /* WineListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WineListView.swift; sourceTree = "<group>"; };
+		A82D1719078F99B66D3EC345 /* Wine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Wine.swift; sourceTree = "<group>"; };
+		A8D51EA3DC409205D8CB5720 /* TextMatching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMatching.swift; sourceTree = "<group>"; };
+		B187083F2A42DFA46A58E95D /* Cards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cards.swift; sourceTree = "<group>"; };
+		B721A03A8142C5E0C2EEAB40 /* WineType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WineType.swift; sourceTree = "<group>"; };
+		C26C54532487D790459240CE /* catalog.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = catalog.json; sourceTree = "<group>"; };
+		CCF7DD3E99CDC096EDE227C1 /* ScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerView.swift; sourceTree = "<group>"; };
+		DD6B113B2A47349863AB8D40 /* WineFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WineFormView.swift; sourceTree = "<group>"; };
+		EFD845DC680D2D7E30BA0679 /* CatalogWine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogWine.swift; sourceTree = "<group>"; };
+		F186E83D5AB8046A8C36A650 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		F985B63BAACDA13EED72FBCD /* FridgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FridgeView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		598E1AD01013E2644C6622F3 /* Weinkeller */ = {
+			isa = PBXGroup;
+			children = (
+				206050DD900C37A1C44ACADA /* Assets.xcassets */,
+				98D35BEA87BD4A8466894BDE /* WeinkellerApp.swift */,
+				5F1216B25DA789142B496EC3 /* Catalog */,
+				D1D9222A265A16B0713E5F7B /* Design */,
+				89C2BB229AF238BB1ED1EB6F /* Import */,
+				FA7F9154C944E5D0593A6350 /* Models */,
+				A14EFABAE2A8F60D6D69B475 /* Scanner */,
+				FF17DEBC063C267733F7DEA5 /* Views */,
+			);
+			path = Weinkeller;
+			sourceTree = "<group>";
+		};
+		5F1216B25DA789142B496EC3 /* Catalog */ = {
+			isa = PBXGroup;
+			children = (
+				C26C54532487D790459240CE /* catalog.json */,
+				EFD845DC680D2D7E30BA0679 /* CatalogWine.swift */,
+				A8D51EA3DC409205D8CB5720 /* TextMatching.swift */,
+				37FAFB49694BB81C753A61E6 /* WineCatalog.swift */,
+			);
+			path = Catalog;
+			sourceTree = "<group>";
+		};
+		89C2BB229AF238BB1ED1EB6F /* Import */ = {
+			isa = PBXGroup;
+			children = (
+				2E79D6C866989C271F01D110 /* CSV.swift */,
+				515A69D54A6A9A4D4CAC6F1B /* WineImport.swift */,
+			);
+			path = Import;
+			sourceTree = "<group>";
+		};
+		8B32A4F2FF8914DCCFA4B9F8 = {
+			isa = PBXGroup;
+			children = (
+				598E1AD01013E2644C6622F3 /* Weinkeller */,
+				9220D2CE5EBF15DA3B3CF2FA /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		9220D2CE5EBF15DA3B3CF2FA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3111F308677A8F526B8269D0 /* Weinkeller.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A14EFABAE2A8F60D6D69B475 /* Scanner */ = {
+			isa = PBXGroup;
+			children = (
+				4BA0AAF50FEE1DA29A849E7D /* ScanFlowView.swift */,
+				CCF7DD3E99CDC096EDE227C1 /* ScannerView.swift */,
+			);
+			path = Scanner;
+			sourceTree = "<group>";
+		};
+		D1D9222A265A16B0713E5F7B /* Design */ = {
+			isa = PBXGroup;
+			children = (
+				9CE98B297FEAA18A25F05A1C /* Backdrop.swift */,
+				7918C0E4C438AB11BE23C3D9 /* BarAppearance.swift */,
+				B187083F2A42DFA46A58E95D /* Cards.swift */,
+				4CF3B733F86F4DD71003829D /* Controls.swift */,
+				945723578E862123CB8AD0ED /* Glass.swift */,
+				1A4AE2EBBF1A0851A29AA945 /* Theme.swift */,
+			);
+			path = Design;
+			sourceTree = "<group>";
+		};
+		FA7F9154C944E5D0593A6350 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				88A3ABECB8BEC85442714566 /* Bottle.swift */,
+				595D7590A93753EAB687F6D1 /* DebugSeed.swift */,
+				7072170A8B2C96377555C732 /* DrinkWindow.swift */,
+				66D68A122A6AA4574EA886E7 /* Fridge.swift */,
+				A82D1719078F99B66D3EC345 /* Wine.swift */,
+				B721A03A8142C5E0C2EEAB40 /* WineType.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		FF17DEBC063C267733F7DEA5 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				00B1E5CA6A67C21451AB7191 /* BottleDetailView.swift */,
+				F985B63BAACDA13EED72FBCD /* FridgeView.swift */,
+				1EB50D246463D5AD0C4527FA /* GlassTabBar.swift */,
+				8802FBFB82D3CDEE0B55F3F0 /* HomeView.swift */,
+				A4E6780A17EA6D0A2F09B22B /* ImportView.swift */,
+				F186E83D5AB8046A8C36A650 /* OnboardingView.swift */,
+				A1E6EBC0FD77F4E878755790 /* PlacePicker.swift */,
+				486F76639A01379C1CE1BC7D /* RootView.swift */,
+				5A46C0BAF6F35E6CA510E50D /* SettingsView.swift */,
+				39AFF5A4673BCC251AD60D1E /* UnplacedView.swift */,
+				23FDE5669D3B4E91FDAADAD3 /* WineDetailView.swift */,
+				DD6B113B2A47349863AB8D40 /* WineFormView.swift */,
+				A67E88AFD8A6501E3762BEEC /* WineListView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A714B197566C8BB947A87A9F /* Weinkeller */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 02786ECCBBD1FC294CC07B2E /* Build configuration list for PBXNativeTarget "Weinkeller" */;
+			buildPhases = (
+				1DEA7A19D6F29620A081F26B /* Sources */,
+				B46B29C6DC2CB6425116BB7C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Weinkeller;
+			productName = Weinkeller;
+			productReference = 3111F308677A8F526B8269D0 /* Weinkeller.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		62D387C45ABE82EC4B5F11BE /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					A714B197566C8BB947A87A9F = {
+						DevelopmentTeam = 97M8QABMLM;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = A3094EBF0491531D306FC743 /* Build configuration list for PBXProject "Weinkeller" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 8B32A4F2FF8914DCCFA4B9F8;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A714B197566C8BB947A87A9F /* Weinkeller */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B46B29C6DC2CB6425116BB7C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				53961F4F0B89267FA5EEAB94 /* Assets.xcassets in Resources */,
+				991D91F0E7D33E750D9E1EAF /* catalog.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1DEA7A19D6F29620A081F26B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				547236C2EA0E627474966618 /* Backdrop.swift in Sources */,
+				A0936312CA9D0D56836D9568 /* BarAppearance.swift in Sources */,
+				5582AE0C82189C5CF41A30E1 /* Bottle.swift in Sources */,
+				FF9E2CAACB8B1AFE6CBF13CF /* BottleDetailView.swift in Sources */,
+				D02A5F2954A18F9B45E9C022 /* CSV.swift in Sources */,
+				10B409C39D91AB8740260F2D /* Cards.swift in Sources */,
+				2A3096C535D94ADFD5F9F845 /* CatalogWine.swift in Sources */,
+				94021BA0B60CBF4E78F35CF7 /* Controls.swift in Sources */,
+				C40C8DD929B0C1827D9CC2F9 /* DebugSeed.swift in Sources */,
+				1BC8DDD955E0DDA80C1CB311 /* DrinkWindow.swift in Sources */,
+				A873D2544DF5F4845F358E97 /* Fridge.swift in Sources */,
+				2112C87E6C10ADEA67B42731 /* FridgeView.swift in Sources */,
+				7EBE422D95F425D16D9EFBB3 /* Glass.swift in Sources */,
+				035F39F749787BA708B99584 /* GlassTabBar.swift in Sources */,
+				8EA641BC49CBDE75431E64E7 /* HomeView.swift in Sources */,
+				A50BC4F80824914AD5A7DA1A /* ImportView.swift in Sources */,
+				56756128825130790D0236F3 /* OnboardingView.swift in Sources */,
+				C68B8C92CD357CACF9C4F3D9 /* PlacePicker.swift in Sources */,
+				C0B1A60C37DEA6DE9C961BC1 /* RootView.swift in Sources */,
+				64FA90472EA2439E1B47441F /* ScanFlowView.swift in Sources */,
+				C5DDDEB444E4CF777B129747 /* ScannerView.swift in Sources */,
+				A587878EEA36A401D260342D /* SettingsView.swift in Sources */,
+				487B143F92B7B19BEC3A9189 /* TextMatching.swift in Sources */,
+				ABA3105C198F41D88F8988EB /* Theme.swift in Sources */,
+				7070F9BA182C8069361C18CA /* UnplacedView.swift in Sources */,
+				8A970F0354B62CAA7DD0B7B8 /* WeinkellerApp.swift in Sources */,
+				F8F8474D964D240F7599783C /* Wine.swift in Sources */,
+				9389B1606AFB338FA2CDF495 /* WineCatalog.swift in Sources */,
+				2CF1E4FCED606AA6629B3E53 /* WineDetailView.swift in Sources */,
+				EEA752071D8027C49C191B50 /* WineFormView.swift in Sources */,
+				2E295A6793CB4070A14BE33F /* WineImport.swift in Sources */,
+				DCA5CF0550F8025BFF951547 /* WineListView.swift in Sources */,
+				4DB46C30465F01391B5578EB /* WineType.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		0B7F551B803F2907985E44CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CURRENT_PROJECT_VERSION = 1;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0.0;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		401FD3A8E298B51C55225660 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 97M8QABMLM;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Vinello;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Zum Scannen von Weinetiketten und Barcodes. Die Fotos bleiben auf deinem Gerät.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				PRODUCT_BUNDLE_IDENTIFIER = ch.weinkeller.app;
+				PRODUCT_NAME = Weinkeller;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		4B1C945E23F84A6FA006E3BA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 97M8QABMLM;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Vinello;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Zum Scannen von Weinetiketten und Barcodes. Die Fotos bleiben auf deinem Gerät.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				PRODUCT_BUNDLE_IDENTIFIER = ch.weinkeller.app;
+				PRODUCT_NAME = Weinkeller;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		DAA83F6B2F63E019F8124357 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CURRENT_PROJECT_VERSION = 1;
+				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1 $(inherited)";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0.0;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		02786ECCBBD1FC294CC07B2E /* Build configuration list for PBXNativeTarget "Weinkeller" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				401FD3A8E298B51C55225660 /* Debug */,
+				4B1C945E23F84A6FA006E3BA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A3094EBF0491531D306FC743 /* Build configuration list for PBXProject "Weinkeller" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DAA83F6B2F63E019F8124357 /* Debug */,
+				0B7F551B803F2907985E44CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 62D387C45ABE82EC4B5F11BE /* Project object */;
+}
