@@ -6,10 +6,22 @@ struct WeinkellerApp: App {
     let container: ModelContainer
 
     init() {
-        do {
-            container = try ModelContainer(for: Fridge.self, Shelf.self, Wine.self, Bottle.self)
-        } catch {
-            fatalError("Datenbank konnte nicht geöffnet werden: \(error)")
+        let schema = Schema([Fridge.self, Shelf.self, Wine.self, Bottle.self])
+
+        // Erst mit iCloud versuchen: dann liegt der Keller im Apple-Konto des Besitzers,
+        // wird automatisch gesichert und ist auf einem neuen iPhone sofort wieder da.
+        // Ohne iCloud-Konto (Simulator, abgemeldetes Gerät) läuft die App lokal weiter,
+        // statt beim Start abzustürzen.
+        if let cloud = try? ModelContainer(
+            for: schema,
+            configurations: ModelConfiguration(schema: schema, cloudKitDatabase: .automatic)) {
+            container = cloud
+        } else if let local = try? ModelContainer(
+            for: schema,
+            configurations: ModelConfiguration(schema: schema, cloudKitDatabase: .none)) {
+            container = local
+        } else {
+            fatalError("Datenbank konnte nicht geöffnet werden")
         }
         Self.prepare(container.mainContext)
         BarAppearance.apply()

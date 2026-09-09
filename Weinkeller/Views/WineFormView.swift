@@ -12,6 +12,7 @@ struct WineFormView: View {
     @State private var shelf: Shelf?
     @State private var slot: Int
     @State private var photoItem: PhotosPickerItem?
+    @State private var showCamera = false
 
     /// Neue Flasche an einem bekannten Platz.
     init(place: Place, prefill: CatalogWine? = nil) {
@@ -41,16 +42,28 @@ struct WineFormView: View {
         NavigationStack {
             Form {
                 Section("Etikett") {
-                    PhotosPicker(selection: $photoItem, matching: .images) {
+                    if let data = draft.photo, let image = UIImage(data: data) {
                         HStack(spacing: 14) {
-                            if let data = draft.photo, let image = UIImage(data: data) {
-                                Image(uiImage: image)
-                                    .resizable().scaledToFill()
-                                    .frame(width: 52, height: 70)
-                                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                            }
-                            Text(draft.photo == nil ? "Foto wählen" : "Foto ersetzen")
+                            Image(uiImage: image)
+                                .resizable().scaledToFill()
+                                .frame(width: 52, height: 70)
+                                .clipShape(RoundedRectangle(cornerRadius: 6))
+                            Text("Etikett aufgenommen").foregroundStyle(Theme.muted)
+                            Spacer()
+                            Button("Entfernen", role: .destructive) { draft.photo = nil }
+                                .font(.system(size: 13))
                         }
+                    }
+                    if CameraPicker.isAvailable {
+                        Button {
+                            showCamera = true
+                        } label: {
+                            Label(draft.photo == nil ? "Etikett fotografieren" : "Neu fotografieren",
+                                  systemImage: "camera.fill")
+                        }
+                    }
+                    PhotosPicker(selection: $photoItem, matching: .images) {
+                        Label("Aus Fotos wählen", systemImage: "photo.on.rectangle")
                     }
                 }
 
@@ -76,6 +89,29 @@ struct WineFormView: View {
                     TextField("Traube", text: $draft.grape)
                 }
 
+                Section {
+                    RatingStars(rating: $draft.rating)
+                        .padding(.vertical, 4)
+                } header: {
+                    Text("Deine Bewertung")
+                } footer: {
+                    Text("Wie DU den Wein fandest — keine Punktzahl aus dem Internet.")
+                }
+
+                Section {
+                    Toggle("Trinkfenster selber setzen", isOn: $draft.ownWindow)
+                    if draft.ownWindow {
+                        TextField("Trinkreif ab", text: $draft.drinkFrom).keyboardType(.numberPad)
+                        TextField("Trinkreif bis", text: $draft.drinkTo).keyboardType(.numberPad)
+                    }
+                } header: {
+                    Text("Trinkfenster")
+                } footer: {
+                    Text(draft.ownWindow
+                         ? "Deine Jahreszahlen gelten statt der Regeltabelle."
+                         : "Ohne eigene Angabe rechnet die App die Trinkreife aus Traube, Region und Art.")
+                }
+
                 Section("Notiz") {
                     TextField("Notiz", text: $draft.note, axis: .vertical).lineLimit(3...6)
                 }
@@ -96,6 +132,12 @@ struct WineFormView: View {
                     Button(editing == nil ? "Einlagern" : "Speichern", action: save)
                         .disabled(draft.name.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
+            }
+            .fullScreenCover(isPresented: $showCamera) {
+                CameraPicker { image in
+                    draft.photo = Self.shrink(image)
+                }
+                .ignoresSafeArea()
             }
             .onChange(of: photoItem) { _, item in
                 Task { draft.photo = await Self.loadShrunkImage(from: item) }
@@ -127,19 +169,20 @@ struct WineFormView: View {
     }
 
     /// Fotos vom iPhone sind riesig. Auf 900 px verkleinern, sonst wächst die Datenbank ins Uferlose.
-    private static func loadShrunkImage(from item: PhotosPickerItem?) async -> Data? {
-        guard let item,
-              let data = try? await item.loadTransferable(type: Data.self),
-              let image = UIImage(data: data) else { return nil }
-
-        let maxSide: CGFloat = 900
+    static func shrink(_ image: UIImage, max maxSide: CGFloat = 900) -> Data? {
         let scale = min(1, maxSide / max(image.size.width, image.size.height))
         guard scale < 1 else { return image.jpegData(compressionQuality: 0.75) }
-
         let size = CGSize(width: image.size.width * scale, height: image.size.height * scale)
         let renderer = UIGraphicsImageRenderer(size: size)
         let resized = renderer.image { _ in image.draw(in: CGRect(origin: .zero, size: size)) }
         return resized.jpegData(compressionQuality: 0.75)
+    }
+
+    private static func loadShrunkImage(from item: PhotosPickerItem?) async -> Data? {
+        guard let item,
+              let data = try? await item.loadTransferable(type: Data.self),
+              let image = UIImage(data: data) else { return nil }
+        return shrink(image)
     }
 }
 
@@ -155,6 +198,10 @@ private struct Draft {
     var note = ""
     var barcode: String?
     var photo: Data?
+    var rating = 0
+    var ownWindow = false
+    var drinkFrom = ""
+    var drinkTo = ""
 
     init(_ catalog: CatalogWine?) {
         guard let catalog else { return }
@@ -178,6 +225,12 @@ private struct Draft {
         note = wine.note
         barcode = wine.barcode
         photo = wine.photo
+        rating = wine.rating
+        if let f = wine.drinkFromOverride, let t = wine.drinkToOverride {
+            ownWindow = true
+            drinkFrom = String(f)
+            drinkTo = String(t)
+        }
     }
 
     func apply(to wine: Wine) {
@@ -191,5 +244,13 @@ private struct Draft {
         wine.note = note
         wine.barcode = barcode
         wine.photo = photo
+        wine.rating = rating
+        if ownWindow, let f = Int(drinkFrom), let t = Int(drinkTo), f <= t {
+            wine.drinkFromOverride = f
+            wine.drinkToOverride = t
+        } else {
+            wine.drinkFromOverride = nil
+            wine.drinkToOverride = nil
+        }
     }
 }

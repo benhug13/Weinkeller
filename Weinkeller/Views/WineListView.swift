@@ -11,7 +11,7 @@ struct WineListView: View {
     @State private var scanning = false
 
     enum SortOrder: String, CaseIterable, Identifiable {
-        case name, vintage, price, readiness
+        case name, vintage, price, readiness, rating
         var id: String { rawValue }
         var label: String {
             switch self {
@@ -19,6 +19,7 @@ struct WineListView: View {
             case .vintage:   return "Jahrgang"
             case .price:     return "Preis"
             case .readiness: return "Trinkreife"
+            case .rating:    return "Bewertung"
             }
         }
     }
@@ -41,6 +42,9 @@ struct WineListView: View {
             list.sort { ($0.price ?? 0) > ($1.price ?? 0) }
         case .readiness:
             list.sort { rank(for: $0) < rank(for: $1) }
+        case .rating:
+            // Unbewertete nach hinten, sonst stehen sie vor den Fünf-Sterne-Weinen.
+            list.sort { ($0.rating == 0 ? -1 : $0.rating) > ($1.rating == 0 ? -1 : $1.rating) }
         }
         return list
     }
@@ -237,11 +241,16 @@ struct WineCard: View {
                     }
                     // Kein Farbpunkt hier: der Anfangsbuchstabe links trägt die Farbe
                     // der Weinart schon. Zwei Farbzeichen nebeneinander verwirren nur.
-                    Text(wine.drinkStatus.label)
-                        .font(.system(size: 11))
-                        .foregroundStyle(statusColor)
-                        .lineLimit(1)
-                        .padding(.top, 1)
+                    HStack(spacing: 8) {
+                        Text(wine.drinkStatus.label)
+                            .font(.system(size: 11))
+                            .foregroundStyle(statusColor)
+                            .lineLimit(1)
+                        if wine.rating > 0 {
+                            RatingStars(rating: .constant(wine.rating), size: 9, interactive: false)
+                        }
+                    }
+                    .padding(.top, 1)
                 }
 
                 Spacer(minLength: 4)

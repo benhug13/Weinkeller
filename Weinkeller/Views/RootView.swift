@@ -93,6 +93,8 @@ struct DebugScreen: View {
                 FontProbe()
             case "onboarding":
                 OnboardingView()
+            case "form":
+                WineFormView()
             default:
                 Text("Unbekannte Ansicht: \(name)")
             }

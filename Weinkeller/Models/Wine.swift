@@ -12,6 +12,9 @@ final class Wine {
     var price: Double?
     var barcode: String?
     var note: String = ""
+    /// Eigene Bewertung, 0 = noch nicht bewertet. Bewusst **keine** Punktzahl aus dem
+    /// Internet: in einem privaten Keller zählt, wie er selber den Wein fand.
+    var rating: Int = 0
     /// Von Hand gesetztes Trinkfenster. Schlägt die Regeltabelle in [[DrinkWindow]].
     var drinkFromOverride: Int?
     var drinkToOverride: Int?

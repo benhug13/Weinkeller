@@ -27,9 +27,11 @@ enum DebugSeed {
             ("Fendant du Valais",       "Provins",       "2022", .weiss,  "Wallis",     "Chasselas",   16),
         ]
 
-        let wines = samples.map { s -> Wine in
+        let ratings = [5, 4, 3, 5, 4, 0, 4, 3, 5, 2, 0]
+        let wines = samples.enumerated().map { index, s -> Wine in
             let wine = Wine(name: s.0, producer: s.1, vintage: s.2, type: s.3,
                             region: s.4, grape: s.5, price: s.6)
+            wine.rating = ratings[index % ratings.count]
             context.insert(wine)
             return wine
         }

@@ -79,6 +79,10 @@ struct WineDetailView: View {
                                 .foregroundStyle(Theme.muted)
                         }
                     }
+                    if wine.rating > 0 {
+                        RatingStars(rating: .constant(wine.rating), size: 15, interactive: false)
+                            .padding(.top, 2)
+                    }
                     Spacer(minLength: 0)
                 }
                 Spacer(minLength: 0)

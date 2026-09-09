@@ -39,6 +39,7 @@
 		C68B8C92CD357CACF9C4F3D9 /* PlacePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1E6EBC0FD77F4E878755790 /* PlacePicker.swift */; };
 		D02A5F2954A18F9B45E9C022 /* CSV.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E79D6C866989C271F01D110 /* CSV.swift */; };
 		DCA5CF0550F8025BFF951547 /* WineListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67E88AFD8A6501E3762BEEC /* WineListView.swift */; };
+		ED64E17C236E551E981ED475 /* CameraPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1765379619C6A406D14A6E99 /* CameraPicker.swift */; };
 		EEA752071D8027C49C191B50 /* WineFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD6B113B2A47349863AB8D40 /* WineFormView.swift */; };
 		F8F8474D964D240F7599783C /* Wine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A82D1719078F99B66D3EC345 /* Wine.swift */; };
 		FF9E2CAACB8B1AFE6CBF13CF /* BottleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B1E5CA6A67C21451AB7191 /* BottleDetailView.swift */; };
@@ -46,6 +47,7 @@
 
 /* Begin PBXFileReference section */
 		00B1E5CA6A67C21451AB7191 /* BottleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottleDetailView.swift; sourceTree = "<group>"; };
+		1765379619C6A406D14A6E99 /* CameraPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPicker.swift; sourceTree = "<group>"; };
 		1A4AE2EBBF1A0851A29AA945 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		1EB50D246463D5AD0C4527FA /* GlassTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassTabBar.swift; sourceTree = "<group>"; };
 		206050DD900C37A1C44ACADA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -73,6 +75,7 @@
 		A67E88AFD8A6501E3762BEEC /* WineListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WineListView.swift; sourceTree = "<group>"; };
 		A82D1719078F99B66D3EC345 /* Wine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Wine.swift; sourceTree = "<group>"; };
 		A8D51EA3DC409205D8CB5720 /* TextMatching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMatching.swift; sourceTree = "<group>"; };
+		B00B9902501225D45B25931D /* Weinkeller.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Weinkeller.entitlements; sourceTree = "<group>"; };
 		B187083F2A42DFA46A58E95D /* Cards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cards.swift; sourceTree = "<group>"; };
 		B721A03A8142C5E0C2EEAB40 /* WineType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WineType.swift; sourceTree = "<group>"; };
 		C26C54532487D790459240CE /* catalog.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = catalog.json; sourceTree = "<group>"; };
@@ -88,6 +91,7 @@
 			isa = PBXGroup;
 			children = (
 				206050DD900C37A1C44ACADA /* Assets.xcassets */,
+				B00B9902501225D45B25931D /* Weinkeller.entitlements */,
 				98D35BEA87BD4A8466894BDE /* WeinkellerApp.swift */,
 				5F1216B25DA789142B496EC3 /* Catalog */,
 				D1D9222A265A16B0713E5F7B /* Design */,
@@ -174,6 +178,7 @@
 			isa = PBXGroup;
 			children = (
 				00B1E5CA6A67C21451AB7191 /* BottleDetailView.swift */,
+				1765379619C6A406D14A6E99 /* CameraPicker.swift */,
 				F985B63BAACDA13EED72FBCD /* FridgeView.swift */,
 				1EB50D246463D5AD0C4527FA /* GlassTabBar.swift */,
 				8802FBFB82D3CDEE0B55F3F0 /* HomeView.swift */,
@@ -263,6 +268,7 @@
 				5582AE0C82189C5CF41A30E1 /* Bottle.swift in Sources */,
 				FF9E2CAACB8B1AFE6CBF13CF /* BottleDetailView.swift in Sources */,
 				D02A5F2954A18F9B45E9C022 /* CSV.swift in Sources */,
+				ED64E17C236E551E981ED475 /* CameraPicker.swift in Sources */,
 				10B409C39D91AB8740260F2D /* Cards.swift in Sources */,
 				2A3096C535D94ADFD5F9F845 /* CatalogWine.swift in Sources */,
 				94021BA0B60CBF4E78F35CF7 /* Controls.swift in Sources */,
@@ -313,6 +319,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Weinkeller/Weinkeller.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 97M8QABMLM;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -333,6 +340,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Weinkeller/Weinkeller.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 97M8QABMLM;
 				GENERATE_INFOPLIST_FILE = YES;
