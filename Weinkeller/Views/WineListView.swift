@@ -100,7 +100,7 @@ struct WineListView: View {
     private var titleRow: some View {
         HStack {
             Text("Weine")
-                .font(.system(size: 34, weight: .bold))
+                .font(Theme.pageTitle)
                 .foregroundStyle(Theme.cream)
             Spacer()
             Menu {

@@ -9,7 +9,7 @@ enum DebugSeed {
     /// `SIMCTL_CHILD_WEINKELLER_DEMO=1 xcrun simctl launch booted ch.weinkeller.app`
     static var isRequested: Bool {
         ProcessInfo.processInfo.arguments.contains("-demo")
-            || ProcessInfo.processInfo.environment["WEINKELLER_DEMO"] == "1"
+            || ["1", "import"].contains(ProcessInfo.processInfo.environment["WEINKELLER_DEMO"] ?? "")
     }
 
     static func fill(_ context: ModelContext, fridges: [Fridge]) {
@@ -34,6 +34,17 @@ enum DebugSeed {
             wine.rating = ratings[index % ratings.count]
             context.insert(wine)
             return wine
+        }
+
+        // `WEINKELLER_DEMO=import`: so sieht es nach einer Liste ohne Plätze aus.
+        if ProcessInfo.processInfo.environment["WEINKELLER_DEMO"] == "import" {
+            for (index, wine) in wines.enumerated() {
+                for _ in 0..<(index % 3 + 1) {
+                    context.insert(Bottle(wine: wine, shelf: nil, slot: 0))
+                }
+            }
+            try? context.save()
+            return
         }
 
         var n = 0

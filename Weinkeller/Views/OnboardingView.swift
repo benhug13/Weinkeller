@@ -47,17 +47,7 @@ struct OnboardingView: View {
             Spacer()
 
             // Der Name wird von links nach rechts sichtbar, als würde er geschrieben.
-            Text(AppInfo.name)
-                .font(.custom("SnellRoundhand-Black", size: 60))
-                .foregroundStyle(Theme.cream)
-                .mask {
-                    LinearGradient(stops: [
-                        .init(color: .black, location: 0),
-                        .init(color: .black, location: reveal),
-                        .init(color: .clear, location: min(reveal + 0.06, 1)),
-                        .init(color: .clear, location: 1),
-                    ], startPoint: .leading, endPoint: .trailing)
-                }
+            Wordmark(size: 60, reveal: reveal)
 
             Text(AppInfo.tagline)
                 .font(.system(size: 15))
@@ -105,7 +95,7 @@ struct OnboardingView: View {
 
             optionCard(icon: "tablecells",
                        title: "Ich habe schon eine Liste",
-                       text: "Eine Excel- oder Numbers-Tabelle mit deinen Weinen. Die lesen wir ein, dann musst du nichts abtippen.") {
+                       text: "In Excel, Word, als PDF, in einer Notiz oder auf Papier. Die lesen wir ein, dann musst du nichts abtippen.") {
                 step = .guide
             }
 
@@ -220,10 +210,10 @@ struct OnboardingView: View {
 
                 Card {
                     VStack(alignment: .leading, spacing: 12) {
-                        guideStep(1, "In **Excel oder Numbers**: Datei → Speichern unter → **CSV UTF-8**.")
-                        guideStep(2, "Die Datei aufs iPhone bringen — **AirDrop**, Mail an dich selbst oder iCloud Drive.")
+                        guideStep(1, "Die Liste darf fast alles sein: **Excel, Word, PDF**, eine **Notiz** zum Einfügen oder ein **Foto** vom Blatt.")
+                        guideStep(2, "Liegt sie auf dem Computer: per **AirDrop**, Mail an dich selbst oder iCloud Drive aufs iPhone.")
                         guideStep(3, "Hier auswählen. Die App zeigt dir die Spalten, und du sagst, **welche was ist**.")
-                        guideStep(4, "Steht in der Liste schon Regal und Fach, werden die Flaschen gleich eingeräumt. Sonst landen sie unter **„Noch einräumen“**.")
+                        guideStep(4, "Steht kein Fach dabei, macht nichts: Die App geht danach **Fach für Fach** mit dir durch.")
                     }
                 }
 
@@ -233,7 +223,7 @@ struct OnboardingView: View {
                         .foregroundStyle(Theme.muted)
                 }
 
-                PrimaryButton(title: "Datei auswählen", systemImage: "doc.badge.plus") {
+                PrimaryButton(title: "Liste einlesen", systemImage: "doc.badge.plus") {
                     importing = true
                 }
                 SecondaryButton(title: "Später — erst Kühlschränke einstellen") {

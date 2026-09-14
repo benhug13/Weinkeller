@@ -74,6 +74,11 @@ struct AmbientBackground: View {
 struct BackdropCanvas: View {
     let backdrop: Backdrop
     var strength: Double = 1.0
+    @Environment(\.colorScheme) private var scheme
+
+    /// Auf Papier tragen dieselben Scheine viel weiter — was im Dunkeln ein Hauch ist,
+    /// wird im Hellen ein Farbfleck. Darum hier gedämpft.
+    private var glowFactor: Double { scheme == .dark ? 1.0 : 0.38 }
 
     var body: some View {
         ZStack {
@@ -83,13 +88,13 @@ struct BackdropCanvas: View {
             // die nach unten hin ganz leicht aufhellt — Tiefe ohne Grafik.
             if backdrop == .verlauf {
                 LinearGradient(
-                    colors: [Color(hex: 0x10141B), Theme.bg, Color(hex: 0x1A212B)],
+                    colors: [Theme.gradientTop, Theme.bg, Theme.gradientBottom],
                     startPoint: .top, endPoint: .bottom)
                     .opacity(min(1, strength))
             }
 
             ForEach(Array(backdrop.glows.enumerated()), id: \.offset) { _, glow in
-                RadialGradient(colors: [glow.color.opacity(glow.opacity * strength), .clear],
+                RadialGradient(colors: [glow.color.opacity(glow.opacity * strength * glowFactor), .clear],
                                center: glow.center, startRadius: 8, endRadius: glow.radius)
             }
         }

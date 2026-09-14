@@ -20,13 +20,15 @@ enum CSV {
         }
     }
 
-    static func parse(_ raw: String) -> Table {
+    /// `separator` nur angeben, wenn es schon feststeht (z.B. Tab aus Notizen) —
+    /// sonst wird es aus der Kopfzeile geraten.
+    static func parse(_ raw: String, separator fixed: Character? = nil) -> Table {
         var text = raw
         if text.hasPrefix("\u{FEFF}") { text.removeFirst() }
         text = text.replacingOccurrences(of: "\r\n", with: "\n")
                    .replacingOccurrences(of: "\r", with: "\n")
 
-        let separator = guessSeparator(in: text)
+        let separator = fixed ?? guessSeparator(in: text)
         var rows: [[String]] = []
         var field = ""
         var row: [String] = []

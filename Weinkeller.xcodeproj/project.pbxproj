@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		035F39F749787BA708B99584 /* GlassTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EB50D246463D5AD0C4527FA /* GlassTabBar.swift */; };
+		07C0420E623CF887B839BEBC /* ZipArchive.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1D9A1087CD6EF4390316AA /* ZipArchive.swift */; };
+		07CB75D778C7019511D091F2 /* ListReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BE264EC06755DE0937AEFB3 /* ListReader.swift */; };
 		10B409C39D91AB8740260F2D /* Cards.swift in Sources */ = {isa = PBXBuildFile; fileRef = B187083F2A42DFA46A58E95D /* Cards.swift */; };
 		1BC8DDD955E0DDA80C1CB311 /* DrinkWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7072170A8B2C96377555C732 /* DrinkWindow.swift */; };
 		2112C87E6C10ADEA67B42731 /* FridgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F985B63BAACDA13EED72FBCD /* FridgeView.swift */; };
@@ -21,9 +23,14 @@
 		5582AE0C82189C5CF41A30E1 /* Bottle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A3ABECB8BEC85442714566 /* Bottle.swift */; };
 		56756128825130790D0236F3 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F186E83D5AB8046A8C36A650 /* OnboardingView.swift */; };
 		64FA90472EA2439E1B47441F /* ScanFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA0AAF50FEE1DA29A849E7D /* ScanFlowView.swift */; };
+		66B984A342AB01280C8D98F7 /* PlacingAssistant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36227F926AF8C83FB76863F8 /* PlacingAssistant.swift */; };
 		7070F9BA182C8069361C18CA /* UnplacedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39AFF5A4673BCC251AD60D1E /* UnplacedView.swift */; };
+		7C8BFE0C618ECDB642A9390F /* Appearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E024575424D075353D16C9 /* Appearance.swift */; };
 		7EBE422D95F425D16D9EFBB3 /* Glass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 945723578E862123CB8AD0ED /* Glass.swift */; };
+		81A3401A42FF7245D76F54D2 /* XLSXReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A49F0584389CD10FB404B9A /* XLSXReader.swift */; };
 		8A970F0354B62CAA7DD0B7B8 /* WeinkellerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D35BEA87BD4A8466894BDE /* WeinkellerApp.swift */; };
+		8B5001711C1D9B1921BE30B9 /* ThemeTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A3F817B3F74BAE5A46A6E5 /* ThemeTile.swift */; };
+		8E1D293D052F3033BBF79378 /* PhotoListReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AF10A2886AB607EC8A488BF /* PhotoListReader.swift */; };
 		8EA641BC49CBDE75431E64E7 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8802FBFB82D3CDEE0B55F3F0 /* HomeView.swift */; };
 		9389B1606AFB338FA2CDF495 /* WineCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37FAFB49694BB81C753A61E6 /* WineCatalog.swift */; };
 		94021BA0B60CBF4E78F35CF7 /* Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF3B733F86F4DD71003829D /* Controls.swift */; };
@@ -37,11 +44,15 @@
 		C40C8DD929B0C1827D9CC2F9 /* DebugSeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595D7590A93753EAB687F6D1 /* DebugSeed.swift */; };
 		C5DDDEB444E4CF777B129747 /* ScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF7DD3E99CDC096EDE227C1 /* ScannerView.swift */; };
 		C68B8C92CD357CACF9C4F3D9 /* PlacePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1E6EBC0FD77F4E878755790 /* PlacePicker.swift */; };
+		CE7E9FF1CC7966D98B18F940 /* FreshStart.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D87F0B20D267E1236F2E2D /* FreshStart.swift */; };
 		D02A5F2954A18F9B45E9C022 /* CSV.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E79D6C866989C271F01D110 /* CSV.swift */; };
+		D6F85749F8F1516A5B3D23B9 /* FreeTextList.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1BC51DEABB531286C10FA6A /* FreeTextList.swift */; };
 		DCA5CF0550F8025BFF951547 /* WineListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67E88AFD8A6501E3762BEEC /* WineListView.swift */; };
 		ED64E17C236E551E981ED475 /* CameraPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1765379619C6A406D14A6E99 /* CameraPicker.swift */; };
 		EEA752071D8027C49C191B50 /* WineFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD6B113B2A47349863AB8D40 /* WineFormView.swift */; };
+		F0E053024C0CBF5EBCE430DB /* DOCXReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0748562AA076243A54A4D6D /* DOCXReader.swift */; };
 		F8F8474D964D240F7599783C /* Wine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A82D1719078F99B66D3EC345 /* Wine.swift */; };
+		F90874809E7CC8100D0DBA74 /* Wordmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D43A841C6E2D55D5DBF1E18 /* Wordmark.swift */; };
 		FF9E2CAACB8B1AFE6CBF13CF /* BottleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B1E5CA6A67C21451AB7191 /* BottleDetailView.swift */; };
 /* End PBXBuildFile section */
 
@@ -52,8 +63,10 @@
 		1EB50D246463D5AD0C4527FA /* GlassTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassTabBar.swift; sourceTree = "<group>"; };
 		206050DD900C37A1C44ACADA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		23FDE5669D3B4E91FDAADAD3 /* WineDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WineDetailView.swift; sourceTree = "<group>"; };
+		2BE264EC06755DE0937AEFB3 /* ListReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListReader.swift; sourceTree = "<group>"; };
 		2E79D6C866989C271F01D110 /* CSV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSV.swift; sourceTree = "<group>"; };
 		3111F308677A8F526B8269D0 /* Weinkeller.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Weinkeller.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		36227F926AF8C83FB76863F8 /* PlacingAssistant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacingAssistant.swift; sourceTree = "<group>"; };
 		37FAFB49694BB81C753A61E6 /* WineCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WineCatalog.swift; sourceTree = "<group>"; };
 		39AFF5A4673BCC251AD60D1E /* UnplacedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnplacedView.swift; sourceTree = "<group>"; };
 		486F76639A01379C1CE1BC7D /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
@@ -63,27 +76,36 @@
 		595D7590A93753EAB687F6D1 /* DebugSeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugSeed.swift; sourceTree = "<group>"; };
 		5A46C0BAF6F35E6CA510E50D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		66D68A122A6AA4574EA886E7 /* Fridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fridge.swift; sourceTree = "<group>"; };
+		6AF10A2886AB607EC8A488BF /* PhotoListReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListReader.swift; sourceTree = "<group>"; };
 		7072170A8B2C96377555C732 /* DrinkWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrinkWindow.swift; sourceTree = "<group>"; };
 		7918C0E4C438AB11BE23C3D9 /* BarAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarAppearance.swift; sourceTree = "<group>"; };
 		8802FBFB82D3CDEE0B55F3F0 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		88A3ABECB8BEC85442714566 /* Bottle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bottle.swift; sourceTree = "<group>"; };
+		8D43A841C6E2D55D5DBF1E18 /* Wordmark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Wordmark.swift; sourceTree = "<group>"; };
 		945723578E862123CB8AD0ED /* Glass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glass.swift; sourceTree = "<group>"; };
+		98A3F817B3F74BAE5A46A6E5 /* ThemeTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeTile.swift; sourceTree = "<group>"; };
 		98D35BEA87BD4A8466894BDE /* WeinkellerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeinkellerApp.swift; sourceTree = "<group>"; };
+		9A49F0584389CD10FB404B9A /* XLSXReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XLSXReader.swift; sourceTree = "<group>"; };
 		9CE98B297FEAA18A25F05A1C /* Backdrop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backdrop.swift; sourceTree = "<group>"; };
 		A1E6EBC0FD77F4E878755790 /* PlacePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacePicker.swift; sourceTree = "<group>"; };
 		A4E6780A17EA6D0A2F09B22B /* ImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportView.swift; sourceTree = "<group>"; };
+		A5E024575424D075353D16C9 /* Appearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Appearance.swift; sourceTree = "<group>"; };
 		A67E88AFD8A6501E3762BEEC /* WineListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WineListView.swift; sourceTree = "<group>"; };
 		A82D1719078F99B66D3EC345 /* Wine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Wine.swift; sourceTree = "<group>"; };
 		A8D51EA3DC409205D8CB5720 /* TextMatching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMatching.swift; sourceTree = "<group>"; };
 		B00B9902501225D45B25931D /* Weinkeller.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Weinkeller.entitlements; sourceTree = "<group>"; };
+		B0748562AA076243A54A4D6D /* DOCXReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DOCXReader.swift; sourceTree = "<group>"; };
 		B187083F2A42DFA46A58E95D /* Cards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cards.swift; sourceTree = "<group>"; };
 		B721A03A8142C5E0C2EEAB40 /* WineType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WineType.swift; sourceTree = "<group>"; };
 		C26C54532487D790459240CE /* catalog.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = catalog.json; sourceTree = "<group>"; };
 		CCF7DD3E99CDC096EDE227C1 /* ScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerView.swift; sourceTree = "<group>"; };
+		D1BC51DEABB531286C10FA6A /* FreeTextList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeTextList.swift; sourceTree = "<group>"; };
+		D8D87F0B20D267E1236F2E2D /* FreshStart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreshStart.swift; sourceTree = "<group>"; };
 		DD6B113B2A47349863AB8D40 /* WineFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WineFormView.swift; sourceTree = "<group>"; };
 		EFD845DC680D2D7E30BA0679 /* CatalogWine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogWine.swift; sourceTree = "<group>"; };
 		F186E83D5AB8046A8C36A650 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		F985B63BAACDA13EED72FBCD /* FridgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FridgeView.swift; sourceTree = "<group>"; };
+		FF1D9A1087CD6EF4390316AA /* ZipArchive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZipArchive.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -118,7 +140,13 @@
 			isa = PBXGroup;
 			children = (
 				2E79D6C866989C271F01D110 /* CSV.swift */,
+				B0748562AA076243A54A4D6D /* DOCXReader.swift */,
+				D1BC51DEABB531286C10FA6A /* FreeTextList.swift */,
+				2BE264EC06755DE0937AEFB3 /* ListReader.swift */,
+				6AF10A2886AB607EC8A488BF /* PhotoListReader.swift */,
 				515A69D54A6A9A4D4CAC6F1B /* WineImport.swift */,
+				9A49F0584389CD10FB404B9A /* XLSXReader.swift */,
+				FF1D9A1087CD6EF4390316AA /* ZipArchive.swift */,
 			);
 			path = Import;
 			sourceTree = "<group>";
@@ -151,12 +179,14 @@
 		D1D9222A265A16B0713E5F7B /* Design */ = {
 			isa = PBXGroup;
 			children = (
+				A5E024575424D075353D16C9 /* Appearance.swift */,
 				9CE98B297FEAA18A25F05A1C /* Backdrop.swift */,
 				7918C0E4C438AB11BE23C3D9 /* BarAppearance.swift */,
 				B187083F2A42DFA46A58E95D /* Cards.swift */,
 				4CF3B733F86F4DD71003829D /* Controls.swift */,
 				945723578E862123CB8AD0ED /* Glass.swift */,
 				1A4AE2EBBF1A0851A29AA945 /* Theme.swift */,
+				98A3F817B3F74BAE5A46A6E5 /* ThemeTile.swift */,
 			);
 			path = Design;
 			sourceTree = "<group>";
@@ -167,6 +197,7 @@
 				88A3ABECB8BEC85442714566 /* Bottle.swift */,
 				595D7590A93753EAB687F6D1 /* DebugSeed.swift */,
 				7072170A8B2C96377555C732 /* DrinkWindow.swift */,
+				D8D87F0B20D267E1236F2E2D /* FreshStart.swift */,
 				66D68A122A6AA4574EA886E7 /* Fridge.swift */,
 				A82D1719078F99B66D3EC345 /* Wine.swift */,
 				B721A03A8142C5E0C2EEAB40 /* WineType.swift */,
@@ -185,12 +216,14 @@
 				A4E6780A17EA6D0A2F09B22B /* ImportView.swift */,
 				F186E83D5AB8046A8C36A650 /* OnboardingView.swift */,
 				A1E6EBC0FD77F4E878755790 /* PlacePicker.swift */,
+				36227F926AF8C83FB76863F8 /* PlacingAssistant.swift */,
 				486F76639A01379C1CE1BC7D /* RootView.swift */,
 				5A46C0BAF6F35E6CA510E50D /* SettingsView.swift */,
 				39AFF5A4673BCC251AD60D1E /* UnplacedView.swift */,
 				23FDE5669D3B4E91FDAADAD3 /* WineDetailView.swift */,
 				DD6B113B2A47349863AB8D40 /* WineFormView.swift */,
 				A67E88AFD8A6501E3762BEEC /* WineListView.swift */,
+				8D43A841C6E2D55D5DBF1E18 /* Wordmark.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -263,6 +296,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7C8BFE0C618ECDB642A9390F /* Appearance.swift in Sources */,
 				547236C2EA0E627474966618 /* Backdrop.swift in Sources */,
 				A0936312CA9D0D56836D9568 /* BarAppearance.swift in Sources */,
 				5582AE0C82189C5CF41A30E1 /* Bottle.swift in Sources */,
@@ -272,22 +306,29 @@
 				10B409C39D91AB8740260F2D /* Cards.swift in Sources */,
 				2A3096C535D94ADFD5F9F845 /* CatalogWine.swift in Sources */,
 				94021BA0B60CBF4E78F35CF7 /* Controls.swift in Sources */,
+				F0E053024C0CBF5EBCE430DB /* DOCXReader.swift in Sources */,
 				C40C8DD929B0C1827D9CC2F9 /* DebugSeed.swift in Sources */,
 				1BC8DDD955E0DDA80C1CB311 /* DrinkWindow.swift in Sources */,
+				D6F85749F8F1516A5B3D23B9 /* FreeTextList.swift in Sources */,
+				CE7E9FF1CC7966D98B18F940 /* FreshStart.swift in Sources */,
 				A873D2544DF5F4845F358E97 /* Fridge.swift in Sources */,
 				2112C87E6C10ADEA67B42731 /* FridgeView.swift in Sources */,
 				7EBE422D95F425D16D9EFBB3 /* Glass.swift in Sources */,
 				035F39F749787BA708B99584 /* GlassTabBar.swift in Sources */,
 				8EA641BC49CBDE75431E64E7 /* HomeView.swift in Sources */,
 				A50BC4F80824914AD5A7DA1A /* ImportView.swift in Sources */,
+				07CB75D778C7019511D091F2 /* ListReader.swift in Sources */,
 				56756128825130790D0236F3 /* OnboardingView.swift in Sources */,
+				8E1D293D052F3033BBF79378 /* PhotoListReader.swift in Sources */,
 				C68B8C92CD357CACF9C4F3D9 /* PlacePicker.swift in Sources */,
+				66B984A342AB01280C8D98F7 /* PlacingAssistant.swift in Sources */,
 				C0B1A60C37DEA6DE9C961BC1 /* RootView.swift in Sources */,
 				64FA90472EA2439E1B47441F /* ScanFlowView.swift in Sources */,
 				C5DDDEB444E4CF777B129747 /* ScannerView.swift in Sources */,
 				A587878EEA36A401D260342D /* SettingsView.swift in Sources */,
 				487B143F92B7B19BEC3A9189 /* TextMatching.swift in Sources */,
 				ABA3105C198F41D88F8988EB /* Theme.swift in Sources */,
+				8B5001711C1D9B1921BE30B9 /* ThemeTile.swift in Sources */,
 				7070F9BA182C8069361C18CA /* UnplacedView.swift in Sources */,
 				8A970F0354B62CAA7DD0B7B8 /* WeinkellerApp.swift in Sources */,
 				F8F8474D964D240F7599783C /* Wine.swift in Sources */,
@@ -297,6 +338,9 @@
 				2E295A6793CB4070A14BE33F /* WineImport.swift in Sources */,
 				DCA5CF0550F8025BFF951547 /* WineListView.swift in Sources */,
 				4DB46C30465F01391B5578EB /* WineType.swift in Sources */,
+				F90874809E7CC8100D0DBA74 /* Wordmark.swift in Sources */,
+				81A3401A42FF7245D76F54D2 /* XLSXReader.swift in Sources */,
+				07C0420E623CF887B839BEBC /* ZipArchive.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

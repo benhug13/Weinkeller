@@ -12,6 +12,12 @@ import SwiftUI
 /// `if #available(iOS 26, *)`. Alle Ansichten benutzen ausschliesslich diese Funktion,
 /// sonst ist nirgends Glas verdrahtet.
 extension View {
+    /// Genau der Kartenlook von [[EwigesWissen]] (Ben, 14.09.2026: „mach es so wie bei
+    /// ewiges wissen"): nur Apples Milchglas, **keine** Eigenfarbe darüber, eine feine,
+    /// gleichmässige Kante und ein kaum sichtbarer Schatten.
+    ///
+    /// Vorher lag ein helles Grau auf dem Glas, dazu eine starke Lichtkante oben links —
+    /// das machte die Karten grau und hart statt glasig.
     func glassPanel(radius: CGFloat = 22,
                     tint: Color = Theme.glassTint,
                     highlight: Double = 0.38,
@@ -23,15 +29,10 @@ extension View {
                 shape.fill(tint)
             }
             .overlay {
-                // Lichtkante: oben links hell, unten rechts fast weg — wie eine Glaskante.
-                shape.strokeBorder(
-                    LinearGradient(
-                        colors: [.white.opacity(highlight), .white.opacity(0.06), .white.opacity(highlight * 0.35)],
-                        startPoint: .topLeading, endPoint: .bottomTrailing),
-                    lineWidth: 0.8)
+                shape.strokeBorder(Theme.edge(0.18), lineWidth: 0.5)
             }
             .clipShape(shape)
-            .shadow(color: .black.opacity(shadow ? 0.34 : 0), radius: 16, y: 8)
+            .shadow(color: Theme.shade(shadow ? 0.08 : 0), radius: 14, x: 0, y: 4)
     }
 }
 

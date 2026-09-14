@@ -69,15 +69,16 @@ struct GlassTabBar: View {
             }
         }
         .padding(5)
-        // Bewusst NICHT durchscheinend: Ben will unten nichts durchschimmern sehen.
+        // Dasselbe Milchglas wie die Karten. Durchschimmern kann trotzdem nichts: der Inhalt
+        // wird über der Leiste ausgeblendet (Maske in RootView), dahinter liegt nur der Grund.
         .background {
-            Capsule().fill(Theme.panel)
+            Capsule().fill(.ultraThinMaterial)
         }
         .overlay {
-            Capsule().strokeBorder(.white.opacity(0.13), lineWidth: 0.8)
+            Capsule().strokeBorder(Theme.edge(0.18), lineWidth: 0.5)
         }
         .clipShape(Capsule())
-        .shadow(color: .black.opacity(0.40), radius: 16, y: 6)
+        .shadow(color: Theme.shade(0.08), radius: 14, y: 4)
         .padding(.horizontal, 22)
     }
 }

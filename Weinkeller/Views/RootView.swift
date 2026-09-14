@@ -4,6 +4,8 @@ import SwiftData
 struct RootView: View {
     @State private var tab: Tab = .start
     @AppStorage("onboarded") private var onboarded = false
+    @State private var greeting = true
+    @AppStorage("appearance") private var appearanceRaw = Appearance.schwarz.rawValue
 
     var body: some View {
         #if DEBUG
@@ -18,12 +20,33 @@ struct RootView: View {
     }
 
     /// Beim allerersten Start führt der Willkommensablauf durch die Einrichtung.
+    /// Bei jedem weiteren Start schreibt sich kurz der Name, dann ist man drin.
     @ViewBuilder
     private var main: some View {
         if onboarded {
-            shell
+            ZStack {
+                shell
+                    // Schwarz und Keller sind für das iPhone beide „dunkel" — beim Wechsel
+                    // ändert sich für es nichts, also zeichnet es von selbst nicht neu.
+                    // Die neue Kennung baut die Seiten frisch auf; der Tab bleibt, weil er
+                    // hier oben liegt.
+                    .id(appearanceRaw)
+                if greeting {
+                    SplashView()
+                        .transition(.opacity)
+                        .zIndex(1)
+                }
+            }
+            .task {
+                // Nur beim Start, nicht nach dem Willkommensablauf — wer gerade
+                // eingerichtet hat, will nicht nochmal begrüsst werden.
+                guard greeting else { return }
+                try? await Task.sleep(nanoseconds: 1_150_000_000)
+                withAnimation(.easeOut(duration: 0.45)) { greeting = false }
+            }
         } else {
             OnboardingView()
+                .onAppear { greeting = false }
         }
     }
 
@@ -79,6 +102,8 @@ struct DebugScreen: View {
             switch name {
             case "fridge":
                 if let fridge = fridges.first { FridgeView(fridge: fridge) }
+            case "home":
+                HomeView()
             case "wines":
                 WineListView()
             case "wine":
@@ -89,6 +114,10 @@ struct DebugScreen: View {
                 ImportView()
             case "unplaced":
                 UnplacedView()
+            case "walk":
+                SlotWalkView()
+            case "guided":
+                GuidedPlacingView()
             case "fonts":
                 FontProbe()
             case "onboarding":

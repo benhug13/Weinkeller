@@ -8,13 +8,19 @@ struct SettingsView: View {
     @Query private var wines: [Wine]
     @Query private var bottles: [Bottle]
 
+    @AppStorage("appearance") private var appearanceRaw = Appearance.schwarz.rawValue
+    @AppStorage("settingsDesignOpen") private var designOpen = false
     @AppStorage("backdrop") private var backdropRaw = Backdrop.schlicht.rawValue
     @AppStorage("backdropStrength") private var strength: Double = 1.0
 
+    @AppStorage("onboarded") private var onboarded = false
+
     @State private var importing = false
     @State private var alert: String?
+    @State private var confirmingReset = false
 
     private var backdrop: Backdrop { Backdrop(rawValue: backdropRaw) ?? .schlicht }
+    private var appearance: Appearance { Appearance(rawValue: appearanceRaw) ?? .schwarz }
     private var inCellar: Int { bottles.filter { !$0.isDrunk }.count }
 
     var body: some View {
@@ -22,14 +28,15 @@ struct SettingsView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 22) {
                     Text("Einstellungen")
-                        .font(.system(size: 34, weight: .bold))
+                        .font(Theme.pageTitle)
                         .foregroundStyle(Theme.cream)
                         .padding(.top, 4)
 
-                    backdropSection
+                    designSection
                     fridgeSection
                     listSection
                     statsSection
+                    resetSection
                     aboutSection
                 }
                 .padding(18)
@@ -47,62 +54,107 @@ struct SettingsView: View {
         }
     }
 
-    // MARK: - Hintergrund
+    // MARK: - Design
 
-    private var backdropSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            SectionLabel(text: "Hintergrund")
-            Card {
-                VStack(alignment: .leading, spacing: 14) {
-                    // Vorschau mit Glasplättchen: so sieht man, was der Verlauf mit dem Glas macht.
-                    ZStack {
-                        BackdropCanvas(backdrop: backdrop, strength: strength)
-                        Text("Vorschau")
-                            .font(.system(size: 12))
-                            .foregroundStyle(Theme.cream)
-                            .padding(.horizontal, 14).padding(.vertical, 8)
-                            .glassPanel(radius: 13, shadow: false)
-                    }
-                    .frame(height: 86)
-                    .clipShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
-
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 7) {
-                            ForEach(Backdrop.allCases) { option in
-                                Button { backdropRaw = option.rawValue } label: {
-                                    Text(option.label)
-                                        .font(.system(size: 13))
-                                        .foregroundStyle(option == backdrop ? Theme.cream : Theme.muted)
-                                        .padding(.horizontal, 13).padding(.vertical, 7)
-                                        .background { Capsule().fill(option == backdrop ? Theme.wine : .clear) }
-                                        .overlay {
-                                            Capsule().strokeBorder(option == backdrop ? .clear : .white.opacity(0.12),
-                                                                   lineWidth: 0.8)
-                                        }
-                                }
-                                .buttonStyle(.plain)
-                            }
-                        }
-                    }
-
-                    if backdrop != .schlicht {
+    /// Ganz oben, aber zugeklappt: wer nur Regale einstellen will, sieht einen Balken,
+    /// keine Farbmuster. Aufgeklappt bleibt es offen, bis man es wieder zuklappt.
+    private var designSection: some View {
+        Card(padding: 0) {
+            VStack(spacing: 0) {
+                Button {
+                    withAnimation(.snappy(duration: 0.3)) { designOpen.toggle() }
+                } label: {
+                    HStack(spacing: 13) {
+                        Image(systemName: "paintpalette.fill")
+                            .font(.system(size: 17))
+                            .foregroundStyle(Theme.wineLit)
+                            .frame(width: 26)
                         VStack(alignment: .leading, spacing: 2) {
-                            HStack {
-                                Text("Stärke").font(.system(size: 13)).foregroundStyle(Theme.muted)
-                                Spacer()
-                                Text("\(Int(strength * 100)) %")
-                                    .font(.system(size: 13).monospacedDigit())
-                                    .foregroundStyle(Theme.muted)
-                            }
-                            Slider(value: $strength, in: 0.2...1.4).tint(Theme.wine)
+                            Text("Design")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundStyle(Theme.cream)
+                            Text("\(appearance.label) · Hintergrund \(backdrop.label)")
+                                .font(.system(size: 12))
+                                .foregroundStyle(Theme.muted)
                         }
+                        Spacer()
+                        Image(systemName: "chevron.down")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(Theme.muted)
+                            .rotationEffect(.degrees(designOpen ? 180 : 0))
                     }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 14)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
 
-                    Text("„Schlicht“ ist eine ruhige Fläche ohne alles. „Verlauf“ hellt nach unten leicht auf. Die farbigen sind Geschmackssache.")
-                        .font(.system(size: 12))
-                        .foregroundStyle(Theme.mutedDim)
+                if designOpen {
+                    Rectangle().fill(Theme.edge(0.07)).frame(height: 0.7)
+                    VStack(alignment: .leading, spacing: 18) {
+                        themeChooser
+                        backdropChooser
+                    }
+                    .padding(16)
+                    .transition(.opacity)
                 }
             }
+        }
+    }
+
+    private var themeChooser: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            SectionLabel(text: "Farben")
+            LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)],
+                      spacing: 10) {
+                ForEach(Appearance.allCases) { option in
+                    Button { appearanceRaw = option.rawValue } label: {
+                        ThemeTile(option: option, selected: option == appearance)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+    }
+
+    private var backdropChooser: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            SectionLabel(text: "Hintergrund")
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 7) {
+                    ForEach(Backdrop.allCases) { option in
+                        Button { backdropRaw = option.rawValue } label: {
+                            Text(option.label)
+                                .font(.system(size: 13))
+                                .foregroundStyle(option == backdrop ? Color.white : Theme.muted)
+                                .padding(.horizontal, 13).padding(.vertical, 7)
+                                .background { Capsule().fill(option == backdrop ? Theme.wine : .clear) }
+                                .overlay {
+                                    Capsule().strokeBorder(option == backdrop ? .clear : Theme.edge(0.14),
+                                                           lineWidth: 0.8)
+                                }
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+
+            if backdrop != .schlicht {
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack {
+                        Text("Stärke").font(.system(size: 13)).foregroundStyle(Theme.muted)
+                        Spacer()
+                        Text("\(Int(strength * 100)) %")
+                            .font(.system(size: 13).monospacedDigit())
+                            .foregroundStyle(Theme.muted)
+                    }
+                    Slider(value: $strength, in: 0.2...1.4).tint(Theme.wine)
+                }
+            }
+
+            Text("„Schlicht“ ist die reine Grundfarbe ohne alles. Die farbigen Scheine sind Geschmackssache.")
+                .font(.system(size: 12))
+                .foregroundStyle(Theme.mutedDim)
         }
     }
 
@@ -220,10 +272,10 @@ struct SettingsView: View {
                             .foregroundStyle(Theme.wineLit)
                             .frame(width: 26)
                         VStack(alignment: .leading, spacing: 3) {
-                            Text("Aus Excel übernehmen")
+                            Text("Liste übernehmen")
                                 .font(.system(size: 15, weight: .medium))
                                 .foregroundStyle(Theme.cream)
-                            Text("Wer schon eine Weinliste führt, muss nichts abtippen.")
+                            Text("Excel, Word, PDF, Text oder Foto — nichts abtippen.")
                                 .font(.system(size: 12))
                                 .foregroundStyle(Theme.muted)
                                 .multilineTextAlignment(.leading)
@@ -257,13 +309,60 @@ struct SettingsView: View {
         }
     }
 
+    // MARK: - Von vorne beginnen
+
+    /// Damit man die App jemandem zeigen kann, wie er sie beim ersten Mal erlebt —
+    /// und damit ein verkorkster Anfang nicht das Neuinstallieren braucht.
+    private var resetSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            SectionLabel(text: "Neu anfangen")
+            Button { confirmingReset = true } label: {
+                Card {
+                    HStack(spacing: 13) {
+                        Image(systemName: "arrow.counterclockwise")
+                            .font(.system(size: 18))
+                            .foregroundStyle(Theme.wineLit)
+                            .frame(width: 26)
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("Von vorne beginnen")
+                                .font(.system(size: 15, weight: .medium))
+                                .foregroundStyle(Theme.cream)
+                            Text("Löscht alle Weine und startet die App wie beim allerersten Mal.")
+                                .font(.system(size: 12))
+                                .foregroundStyle(Theme.muted)
+                                .multilineTextAlignment(.leading)
+                        }
+                        Spacer(minLength: 0)
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(Theme.mutedDim)
+                    }
+                }
+            }
+            .buttonStyle(.plain)
+        }
+        .confirmationDialog("Wirklich alles löschen?",
+                            isPresented: $confirmingReset,
+                            titleVisibility: .visible) {
+            Button("Alles löschen", role: .destructive) { startOver() }
+            Button("Abbrechen", role: .cancel) {}
+        } message: {
+            Text("\(wines.count) \(wines.count == 1 ? "Wein" : "Weine") und \(inCellar) \(inCellar == 1 ? "Flasche" : "Flaschen") werden gelöscht. Das lässt sich nicht rückgängig machen — bei eingeschaltetem iCloud auch auf deinen anderen Geräten.")
+        }
+    }
+
+    /// Beides im selben Durchgang: SwiftUI baut die Ansicht dann in einem Zug um und
+    /// diese Seite wird abgeräumt, statt nochmal auf gelöschte Objekte zuzugreifen.
+    private func startOver() {
+        onboarded = false
+        FreshStart.wipe(context)
+    }
+
     // MARK: - Über
 
     private var aboutSection: some View {
         VStack(alignment: .center, spacing: 4) {
-            Text(AppInfo.name)
-                .font(.custom("SnellRoundhand-Black", size: 30))
-                .foregroundStyle(Theme.muted)
+            Wordmark(size: 30, color: Theme.muted)
             Text("Alles bleibt auf diesem Gerät.")
                 .font(.system(size: 11))
                 .foregroundStyle(Theme.mutedDim)

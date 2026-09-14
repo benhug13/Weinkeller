@@ -5,6 +5,9 @@ import SwiftData
 struct WeinkellerApp: App {
     let container: ModelContainer
 
+    @AppStorage("appearance") private var appearanceRaw = Appearance.schwarz.rawValue
+    private var appearance: Appearance { Appearance(rawValue: appearanceRaw) ?? .schwarz }
+
     init() {
         let schema = Schema([Fridge.self, Shelf.self, Wine.self, Bottle.self])
 
@@ -30,7 +33,7 @@ struct WeinkellerApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
-                .preferredColorScheme(.dark)
+                .preferredColorScheme(appearance.scheme)
                 .tint(Theme.wine)
         }
         .modelContainer(container)
@@ -47,15 +50,7 @@ struct WeinkellerApp: App {
         let existing = (try? context.fetch(FetchDescriptor<Fridge>())) ?? []
         guard existing.isEmpty else { return }
 
-        for (i, name) in ["Kühlschrank 1", "Kühlschrank 2"].enumerated() {
-            let fridge = Fridge(name: name, order: i)
-            context.insert(fridge)
-            for s in 0..<5 {
-                let shelf = Shelf(name: "Regal \(s + 1)", slots: 8, order: s)
-                shelf.fridge = fridge
-                context.insert(shelf)
-            }
-        }
+        FreshStart.makeDefaultFridges(in: context)
         try? context.save()
 
         #if DEBUG

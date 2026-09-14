@@ -64,8 +64,8 @@ struct HomeView: View {
     /// Balken oben weg und der Titel sitzt wirklich zuoberst.
     private var titleRow: some View {
         HStack(alignment: .center) {
-            Text("Weinkeller")
-                .font(.system(size: 34, weight: .bold))
+            Text(AppInfo.name)
+                .font(Theme.pageTitle)
                 .foregroundStyle(Theme.cream)
             Spacer()
             GlassIconButton(systemName: "viewfinder") { scanning = true }

@@ -8,14 +8,25 @@ import UIKit
 /// UIKit-Erscheinung bekommt sie denselben Milchglas-Effekt wie die Karten.
 enum BarAppearance {
     static func apply() {
-        let blur = UIBlurEffect(style: .systemUltraThinMaterialDark)
-        let ground = UIColor(Theme.bg).withAlphaComponent(0.45)
+        // `...Dark` fest zu verdrahten wäre hier der Fehler: in Hell säße dann ein
+        // dunkler Balken über dem Papier. Die neutrale Fassung folgt der Einstellung.
+        let blur = UIBlurEffect(style: .systemUltraThinMaterial)
+        let ground = UIColor { trait in
+            let p = Palette.active(for: trait)
+            return UIColor(hex: p.bg, alpha: p.isDark ? 0.45 : 0.55)
+        }
+        let hairline = UIColor { trait in
+            trait.userInterfaceStyle == .dark
+                ? UIColor(white: 1, alpha: 0.10)
+                : UIColor(white: 0, alpha: 0.10)
+        }
+        let ink = Theme.uiRole(\.cream)
 
         let tab = UITabBarAppearance()
         tab.configureWithTransparentBackground()
         tab.backgroundEffect = blur
         tab.backgroundColor = ground
-        tab.shadowColor = UIColor.white.withAlphaComponent(0.10)   // feine Lichtkante statt harter Linie
+        tab.shadowColor = hairline   // feine Kante statt harter Linie
         UITabBar.appearance().standardAppearance = tab
         UITabBar.appearance().scrollEdgeAppearance = tab
 
@@ -26,7 +37,7 @@ enum BarAppearance {
         //    ist ein anderer Ton und man sieht einen hellen Streifen.
         // 2. **Sobald gescrollt wird:** Milchglas, damit der Titel über dem
         //    durchlaufenden Inhalt lesbar bleibt.
-        let titles: [NSAttributedString.Key: Any] = [.foregroundColor: UIColor(Theme.cream)]
+        let titles: [NSAttributedString.Key: Any] = [.foregroundColor: ink]
 
         let navTop = UINavigationBarAppearance()
         navTop.configureWithTransparentBackground()
@@ -40,7 +51,7 @@ enum BarAppearance {
         navScrolled.configureWithTransparentBackground()
         navScrolled.backgroundEffect = blur
         navScrolled.backgroundColor = ground
-        navScrolled.shadowColor = UIColor.white.withAlphaComponent(0.08)
+        navScrolled.shadowColor = hairline
         navScrolled.titleTextAttributes = titles
         navScrolled.largeTitleTextAttributes = titles
 

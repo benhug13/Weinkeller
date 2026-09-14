@@ -11,7 +11,7 @@ struct UnplacedView: View {
     @State private var placing: Bottle?
     @State private var shelf: Shelf?
     @State private var slot = 0
-    @State private var askAutoFill = false
+    @State private var mode: PlacingMode?
 
     private var unplaced: [Bottle] {
         bottles
@@ -40,18 +40,26 @@ struct UnplacedView: View {
                 } else {
                     Card {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("\(unplaced.count) Flaschen ohne Platz")
-                                .font(Theme.serif(19))
+                            Text("\(unplaced.count) \(unplaced.count == 1 ? "Flasche" : "Flaschen") ohne Platz")
+                                .font(Theme.serif(21))
                                 .foregroundStyle(Theme.cream)
-                            Text("\(freeSlotCount) Fächer sind frei. Tipp eine Flasche an, um sie einzuräumen — oder füll der Reihe nach auf und stell sie danach genauso hin.")
+                            Text("In der Liste stand nicht, wo sie liegen. Such dir aus, wie du vorgehen willst — beides geht direkt vor dem offenen Kühlschrank. \(freeSlotCount) Fächer sind frei.")
                                 .font(.system(size: 13))
                                 .foregroundStyle(Theme.muted)
                         }
                     }
 
-                    SecondaryButton(title: "Der Reihe nach auffüllen", systemImage: "arrow.down.to.line") {
-                        askAutoFill = true
-                    }
+                    modeCard(.walk,
+                             icon: "eye",
+                             title: "Nachschauen, was wo liegt",
+                             text: "Die Flaschen liegen schon drin. Die App geht Fach für Fach durch, du tippst, welche Flasche dort liegt.")
+                    modeCard(.guided,
+                             icon: "arrow.down.to.line",
+                             title: "Neu einräumen",
+                             text: "Die Flaschen sind draussen. Die App nimmt eine nach der anderen und sagt dir, in welches Fach sie gehört.")
+
+                    SectionLabel(text: "Oder einzeln")
+                        .padding(.top, 8)
 
                     ForEach(unplaced) { bottle in
                         Button {
@@ -91,13 +99,40 @@ struct UnplacedView: View {
         .navigationTitle("Noch einräumen")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $placing) { bottle in placeSheet(for: bottle) }
-        .confirmationDialog("Der Reihe nach auffüllen?",
-                            isPresented: $askAutoFill, titleVisibility: .visible) {
-            Button("\(min(unplaced.count, freeSlotCount)) Flaschen verteilen") { autoFill() }
-            Button("Abbrechen", role: .cancel) { }
-        } message: {
-            Text("Die Flaschen werden von vorne in die freien Fächer gelegt. Nur sinnvoll, wenn du sie danach auch so in den Kühlschrank stellst.")
+        .navigationDestination(item: $mode) { mode in
+            switch mode {
+            case .walk:   SlotWalkView()
+            case .guided: GuidedPlacingView()
+            }
         }
+    }
+
+    private func modeCard(_ target: PlacingMode, icon: String, title: String, text: String) -> some View {
+        Button { mode = target } label: {
+            Card {
+                HStack(spacing: 14) {
+                    Image(systemName: icon)
+                        .font(.system(size: 19, weight: .medium))
+                        .foregroundStyle(Theme.wineLit)
+                        .frame(width: 28)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(title)
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(Theme.cream)
+                        Text(text)
+                            .font(.system(size: 13))
+                            .foregroundStyle(Theme.muted)
+                            .multilineTextAlignment(.leading)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    Spacer(minLength: 0)
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(Theme.mutedDim)
+                }
+            }
+        }
+        .buttonStyle(.plain)
     }
 
     private func placeSheet(for bottle: Bottle) -> some View {
@@ -133,21 +168,5 @@ struct UnplacedView: View {
         shelf = nil          // PlacePicker schlägt dann selber das erste freie Fach vor
         slot = 0
         self.placing = bottle
-    }
-
-    /// Legt die Flaschen von vorne in die freien Fächer — Kühlschrank für Kühlschrank.
-    private func autoFill() {
-        var queue = unplaced
-        outer: for fridge in fridges {
-            for shelf in fridge.sortedShelves {
-                for free in shelf.freeSlots {
-                    guard let bottle = queue.first else { break outer }
-                    queue.removeFirst()
-                    bottle.shelf = shelf
-                    bottle.slot = free
-                }
-            }
-        }
-        try? context.save()
     }
 }
