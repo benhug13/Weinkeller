@@ -40,5 +40,7 @@ targets:
         SWIFT_EMIT_LOC_STRINGS: YES
         PRODUCT_NAME: Weinkeller
         INFOPLIST_KEY_CFBundleDisplayName: Vinello
+        # Nur HTTPS, keine eigene Verschlüsselung → keine Exportfrage bei jedem TestFlight-Build.
+        INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         CODE_SIGN_ENTITLEMENTS: Weinkeller/Weinkeller.entitlements
