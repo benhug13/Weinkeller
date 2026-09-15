@@ -118,6 +118,11 @@ struct DebugScreen: View {
                 SlotWalkView()
             case "guided":
                 GuidedPlacingView()
+            case "prices":
+                PriceBatchView()
+            case "pricelookup":
+                PriceLookupView(name: "Amarone della Valpolicella Classico", producer: "Tommasi",
+                                vintage: "2017", region: "Venetien") { _, _ in }
             case "fonts":
                 FontProbe()
             case "onboarding":

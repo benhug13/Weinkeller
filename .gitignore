@@ -6,3 +6,6 @@ DerivedData/
 # Build ohnehin neu aus project.yml, sie kann also nicht veralten.
 *.xcworkspace
 BuildNumber.xcconfig
+
+# Kennung für den Vinello-Server — das Repo ist öffentlich
+Weinkeller/Services/Secrets.swift

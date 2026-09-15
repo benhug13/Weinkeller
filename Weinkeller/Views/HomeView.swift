@@ -13,6 +13,10 @@ struct HomeView: View {
     private var inCellar: [Bottle] { bottles.filter { !$0.isDrunk } }
     private var unplaced: [Bottle] { inCellar.filter { !$0.hasPlace } }
 
+    private var estimatedBottles: Int {
+        inCellar.filter { $0.wine?.priceIsEstimate == true }.count
+    }
+
     private var cellarValue: Double {
         inCellar.reduce(0) { $0 + ($1.wine?.price ?? 0) }
     }
@@ -87,6 +91,11 @@ struct HomeView: View {
                 Text("\(inCellar.count) Flaschen · \(wines.count) Weine")
                     .font(.system(size: 13))
                     .foregroundStyle(Theme.muted)
+                if estimatedBottles > 0 {
+                    Text("davon \(estimatedBottles) mit Richtpreis aus dem Internet")
+                        .font(.system(size: 12))
+                        .foregroundStyle(Theme.mutedDim)
+                }
                 if cellarValue == 0 && !inCellar.isEmpty {
                     Text("Trag bei den Weinen einen Preis ein, dann steht hier der Wert.")
                         .font(.system(size: 12))

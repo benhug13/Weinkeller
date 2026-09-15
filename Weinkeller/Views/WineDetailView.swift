@@ -13,6 +13,7 @@ struct WineDetailView: View {
     @State private var isAdding = false
     @State private var askWhichBottle = false
     @State private var justDrunk: String?
+    @State private var lookingUpPrice = false
 
     private var bottles: [Bottle] {
         wine.bottlesInCellar.sorted { $0.slot < $1.slot }
@@ -24,6 +25,7 @@ struct WineDetailView: View {
                 header
                 drinkWindowCard
                 specsCard
+                priceHint
                 placesCard
                 actions
             }
@@ -39,6 +41,13 @@ struct WineDetailView: View {
         }
         .sheet(isPresented: $isEditing) { WineFormView(editing: wine) }
         .sheet(isPresented: $isAdding) { AddBottleView(wine: wine) }
+        .sheet(isPresented: $lookingUpPrice) {
+            PriceLookupView(name: wine.name, producer: wine.producer,
+                            vintage: wine.vintage, region: wine.region) { result, chosen in
+                wine.applyPrice(result, chosen: chosen)
+                try? context.save()
+            }
+        }
         .confirmationDialog("Welche Flasche?", isPresented: $askWhichBottle, titleVisibility: .visible) {
             ForEach(bottles) { bottle in
                 Button(bottle.placeLabel) { drink(bottle) }
@@ -149,7 +158,8 @@ struct WineDetailView: View {
         if !wine.region.isEmpty  { rows.append(("Region", wine.region)) }
         if !wine.grape.isEmpty   { rows.append(("Traube", wine.grape)) }
         if let price = wine.price, price > 0 {
-            rows.append(("Preis pro Flasche", price.formatted(.currency(code: "CHF"))))
+            rows.append((wine.priceIsEstimate ? "Richtpreis (Internet)" : "Preis pro Flasche",
+                         price.formatted(.currency(code: "CHF"))))
             if bottles.count > 1 {
                 rows.append(("Wert im Keller",
                              (price * Double(bottles.count)).formatted(.currency(code: "CHF"))))
@@ -159,6 +169,35 @@ struct WineDetailView: View {
         if !wine.note.isEmpty { rows.append(("Notiz", wine.note)) }
         if rows.isEmpty { rows.append(("Noch nichts erfasst", "—")) }
         return rows
+    }
+
+    /// Ohne Preis ein Knopf zum Suchen; bei einem Richtpreis die Shops, aus denen er stammt.
+    @ViewBuilder
+    private var priceHint: some View {
+        if (wine.price ?? 0) <= 0 {
+            SecondaryButton(title: "Preis im Internet suchen", systemImage: "magnifyingglass") {
+                lookingUpPrice = true
+            }
+        } else if wine.priceIsEstimate {
+            let sources = wine.priceSources.split(separator: "\n").compactMap { line -> (String, URL)? in
+                let parts = line.split(separator: "|", maxSplits: 1).map(String.init)
+                guard parts.count == 2, let url = URL(string: parts[1]) else { return nil }
+                return (parts[0], url)
+            }
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Richtpreis aus \(sources.count) \(sources.count == 1 ? "Shop" : "Shops")\(wine.priceCheckedAt.map { ", geprüft am " + $0.formatted(date: .abbreviated, time: .omitted) } ?? "")")
+                    .font(.system(size: 12)).foregroundStyle(Theme.muted)
+                HStack(spacing: 12) {
+                    ForEach(Array(sources.prefix(3).enumerated()), id: \.offset) { _, source in
+                        Link(source.0, destination: source.1)
+                            .font(.system(size: 12))
+                            .foregroundStyle(Theme.wineLit)
+                            .lineLimit(1)
+                    }
+                }
+            }
+            .padding(.horizontal, 4)
+        }
     }
 
     // MARK: - Plätze
@@ -218,6 +257,9 @@ struct WineDetailView: View {
 
     private var moreMenu: some View {
         Menu {
+            Button { lookingUpPrice = true } label: {
+                Label("Preis im Internet suchen", systemImage: "magnifyingglass")
+            }
             Button {
                 isAdding = true
             } label: {

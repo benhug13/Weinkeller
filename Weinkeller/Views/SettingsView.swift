@@ -35,6 +35,7 @@ struct SettingsView: View {
                     designSection
                     fridgeSection
                     listSection
+                    priceSection
                     statsSection
                     resetSection
                     aboutSection
@@ -276,6 +277,42 @@ struct SettingsView: View {
                                 .font(.system(size: 15, weight: .medium))
                                 .foregroundStyle(Theme.cream)
                             Text("Excel, Word, PDF, Text oder Foto — nichts abtippen.")
+                                .font(.system(size: 12))
+                                .foregroundStyle(Theme.muted)
+                                .multilineTextAlignment(.leading)
+                        }
+                        Spacer(minLength: 0)
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(Theme.mutedDim)
+                    }
+                }
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
+    // MARK: - Preise
+
+    private var winesWithoutPrice: Int { wines.filter { ($0.price ?? 0) <= 0 }.count }
+
+    private var priceSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            SectionLabel(text: "Preise")
+            NavigationLink { PriceBatchView() } label: {
+                Card {
+                    HStack(spacing: 13) {
+                        Image(systemName: "tag.fill")
+                            .font(.system(size: 18))
+                            .foregroundStyle(Theme.wineLit)
+                            .frame(width: 26)
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("Preise im Internet suchen")
+                                .font(.system(size: 15, weight: .medium))
+                                .foregroundStyle(Theme.cream)
+                            Text(winesWithoutPrice == 0
+                                 ? "Alle Weine haben einen Preis."
+                                 : "\(winesWithoutPrice) \(winesWithoutPrice == 1 ? "Wein hat" : "Weine haben") noch keinen Preis. Für Flaschen, deren Preis niemand mehr weiss.")
                                 .font(.system(size: 12))
                                 .foregroundStyle(Theme.muted)
                                 .multilineTextAlignment(.leading)

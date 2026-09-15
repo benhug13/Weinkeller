@@ -12,7 +12,12 @@ struct ScanFlowView: View {
     @State private var status: Status = .searching
     @State private var scannedBarcode: String?
     @State private var formPrefill: CatalogWine?
+    @State private var pendingSuggestion: CatalogWine?
     @State private var addToWine: Wine?
+    @State private var takingLabelPhoto = false
+    @State private var labelPhoto: LabelPhoto?
+
+    struct LabelPhoto: Identifiable { let id = UUID(); let data: Data; let prefill: CatalogWine }
 
     enum Status {
         case searching
@@ -49,6 +54,20 @@ struct ScanFlowView: View {
             .sheet(item: $addToWine) { wine in
                 AddBottleView(wine: wine)
             }
+            .fullScreenCover(isPresented: $takingLabelPhoto) {
+                CameraPicker { image in
+                    if let data = WineFormView.shrink(image) {
+                        labelPhoto = LabelPhoto(data: data,
+                                                prefill: pendingSuggestion ?? CatalogWine(barcode: scannedBarcode, name: ""))
+                    }
+                }
+                .ignoresSafeArea()
+            }
+            .sheet(item: $labelPhoto) { photo in
+                // Nur den Barcode mitgeben — der verlesene Etikettentext wäre schlechter als das,
+                // was der Server aus dem Foto liest.
+                WineFormView(prefill: CatalogWine(barcode: photo.prefill.barcode, name: ""), photo: photo.data)
+            }
         }
     }
 
@@ -83,9 +102,14 @@ struct ScanFlowView: View {
             }
 
         case .notFound(let suggestion):
-            card(title: "Wein nicht gefunden", subtitle: "Trag ihn ein — dann kennt ihn die App ab jetzt.") {
-                Button("Jetzt eintragen") { formPrefill = suggestion }
-                    .buttonStyle(.borderedProminent)
+            card(title: "Neuer Wein", subtitle: "Fotografier das Etikett — Name, Winzer, Jahrgang und Region werden ausgefüllt.") {
+                Button("Etikett fotografieren") {
+                    pendingSuggestion = suggestion
+                    takingLabelPhoto = true
+                }
+                .buttonStyle(.borderedProminent)
+                Button("Von Hand eintragen") { formPrefill = suggestion }
+                    .buttonStyle(.bordered)
                 Button("Weiter scannen") { reset() }
                     .buttonStyle(.bordered)
             }

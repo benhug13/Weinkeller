@@ -18,6 +18,14 @@ final class Wine {
     /// Von Hand gesetztes Trinkfenster. Schlägt die Regeltabelle in [[DrinkWindow]].
     var drinkFromOverride: Int?
     var drinkToOverride: Int?
+    /// Woher der Preis stammt: "" = selber eingetragen, "internet" = Richtpreis aus Shops.
+    /// Ein Richtpreis wird in der App immer als solcher gekennzeichnet.
+    var priceSourceRaw: String = ""
+    var priceRangeLow: Double?
+    var priceRangeHigh: Double?
+    /// Die Shops, aus denen der Richtpreis stammt — „Name|URL" pro Zeile.
+    var priceSources: String = ""
+    var priceCheckedAt: Date?
     @Attribute(.externalStorage) var photo: Data?
     var createdAt: Date = Date()
 
@@ -53,6 +61,18 @@ final class Wine {
 
     var bottlesInCellar: [Bottle] {
         (bottles ?? []).filter { !$0.isDrunk }
+    }
+
+    var priceIsEstimate: Bool { priceSourceRaw == "internet" }
+
+    /// Richtpreis aus dem Internet übernehmen — der typische Preis, dazu Spanne und Quellen.
+    func applyPrice(_ result: VinelloAPI.PriceResult, chosen: Double) {
+        price = (chosen * 100).rounded() / 100
+        priceSourceRaw = "internet"
+        priceRangeLow = result.lowCHF
+        priceRangeHigh = result.highCHF
+        priceSources = result.sources.map { "\($0.shop)|\($0.url)" }.joined(separator: "\n")
+        priceCheckedAt = Date()
     }
 
     var drinkWindow: ClosedRange<Int>? { DrinkWindow.years(for: self) }
