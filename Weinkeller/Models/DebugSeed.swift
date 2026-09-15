@@ -9,7 +9,7 @@ enum DebugSeed {
     /// `SIMCTL_CHILD_WEINKELLER_DEMO=1 xcrun simctl launch booted ch.weinkeller.app`
     static var isRequested: Bool {
         ProcessInfo.processInfo.arguments.contains("-demo")
-            || ["1", "import"].contains(ProcessInfo.processInfo.environment["WEINKELLER_DEMO"] ?? "")
+            || ["1", "import", "noprice"].contains(ProcessInfo.processInfo.environment["WEINKELLER_DEMO"] ?? "")
     }
 
     static func fill(_ context: ModelContext, fridges: [Fridge]) {
@@ -28,9 +28,11 @@ enum DebugSeed {
         ]
 
         let ratings = [5, 4, 3, 5, 4, 0, 4, 3, 5, 2, 0]
+        // `WEINKELLER_DEMO=noprice`: wie ein Keller, bei dem niemand die Preise mehr weiss.
+        let withoutPrices = ProcessInfo.processInfo.environment["WEINKELLER_DEMO"] == "noprice"
         let wines = samples.enumerated().map { index, s -> Wine in
             let wine = Wine(name: s.0, producer: s.1, vintage: s.2, type: s.3,
-                            region: s.4, grape: s.5, price: s.6)
+                            region: s.4, grape: s.5, price: withoutPrices ? nil : s.6)
             wine.rating = ratings[index % ratings.count]
             context.insert(wine)
             return wine

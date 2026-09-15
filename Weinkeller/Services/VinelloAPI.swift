@@ -31,6 +31,7 @@ enum VinelloAPI {
         var price: Double
         var currency: String
         var priceCHF: Double
+        var vintage: String?
     }
 
     struct PriceResult: Decodable {
@@ -39,6 +40,11 @@ enum VinelloAPI {
         var highCHF: Double?
         var typicalCHF: Double?
         var sources: [PriceSource]
+        /// Leer, wenn der Preis zum gesuchten Jahrgang gehört. Sonst z. B.
+        /// „Jahrgang 2018 nicht gefunden — Preis von 2020".
+        var vintageNote: String?
+        /// "tavily" (schnell) oder "groq" (langsamer Rückfall).
+        var method: String?
     }
 
     enum Failure: LocalizedError {
@@ -62,8 +68,12 @@ enum VinelloAPI {
         return try await post("api/label", body: ["image": jpeg.base64EncodedString()])
     }
 
-    static func findPrice(name: String, producer: String, vintage: String, region: String) async throws -> PriceResult {
-        try await post("api/price", body: ["name": name, "producer": producer, "vintage": vintage, "region": region])
+    /// `fastOnly`: nur die schnelle Suche (Tavily), ohne den langsamen Groq-Rückfall —
+    /// für die erste Runde der Sammelsuche.
+    static func findPrice(name: String, producer: String, vintage: String, region: String,
+                          fastOnly: Bool = false) async throws -> PriceResult {
+        try await post("api/price", body: ["name": name, "producer": producer, "vintage": vintage,
+                                           "region": region, "fast": fastOnly])
     }
 
     // MARK: - Netz
@@ -72,7 +82,7 @@ enum VinelloAPI {
 
     /// Ist Groq kurz ausgelastet (Gratis-Stufe: Tokens pro Minute), wartet die App die
     /// genannte Zeit und versucht es noch zweimal — der Besitzer merkt davon nur ein paar Sekunden.
-    private static func post<T: Decodable>(_ path: String, body: [String: String]) async throws -> T {
+    private static func post<T: Decodable>(_ path: String, body: [String: Any]) async throws -> T {
         var request = URLRequest(url: baseURL.appendingPathComponent(path))
         request.httpMethod = "POST"
         request.timeoutInterval = 60

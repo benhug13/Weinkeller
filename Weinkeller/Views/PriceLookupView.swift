@@ -6,7 +6,6 @@ import SwiftData
 /// Kein Raten: Der Server behält nur Preise, die er auf der Shop-Seite selber wiedergefunden
 /// hat. Findet er keinen, steht hier ehrlich „nichts gefunden" — lieber eine Lücke als eine
 /// erfundene Zahl im Kellerwert.
-@MainActor
 struct PriceLookupView: View {
     @Environment(\.dismiss) private var dismiss
 
@@ -53,7 +52,7 @@ struct PriceLookupView: View {
                                 ProgressView()
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text("Suche in Weinshops …").foregroundStyle(Theme.cream)
-                                    Text("Jeder Preis wird auf der Shop-Seite nachgeprüft. Das dauert ein paar Sekunden.")
+                                    Text("Jeder Preis wird auf der Shop-Seite nachgeprüft. Meist ein paar Sekunden, bei seltenen Weinen bis zu einer Minute.")
                                         .font(.system(size: 12)).foregroundStyle(Theme.muted)
                                 }
                             }
@@ -78,6 +77,11 @@ struct PriceLookupView: View {
                 VStack(alignment: .leading, spacing: 6) {
                     SectionLabel(text: "Richtpreis pro Flasche")
                     Text(chf(typical)).font(Theme.serif(38)).foregroundStyle(Theme.cream)
+                    if let note = result.vintageNote, !note.isEmpty {
+                        Label(note, systemImage: "exclamationmark.circle")
+                            .font(.system(size: 13))
+                            .foregroundStyle(Theme.typeSuess)
+                    }
                     if let low = result.lowCHF, let high = result.highCHF, high > low {
                         Text("Spanne \(chf(low)) – \(chf(high)) · \(result.sources.count) \(result.sources.count == 1 ? "Shop" : "Shops")")
                             .font(.system(size: 13)).foregroundStyle(Theme.muted)
@@ -101,7 +105,8 @@ struct PriceLookupView: View {
                                 HStack {
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text(source.shop).font(.system(size: 15)).foregroundStyle(Theme.cream)
-                                        Text(url.host ?? "").font(.system(size: 11)).foregroundStyle(Theme.mutedDim)
+                                        Text([source.vintage, url.host].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · "))
+                                            .font(.system(size: 11)).foregroundStyle(Theme.mutedDim)
                                     }
                                     Spacer()
                                     Text(source.currency == "EUR"
@@ -157,7 +162,6 @@ struct PriceLookupView: View {
 ///
 /// Läuft **nacheinander mit Pausen**: Die Gratis-Stufe von Groq erlaubt nur wenige Internet-
 /// suchen pro Minute. Solange diese Seite offen ist, bleibt der Bildschirm an.
-@MainActor
 struct PriceBatchView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \Wine.name) private var wines: [Wine]
@@ -177,7 +181,7 @@ struct PriceBatchView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text(running ? "Suche läuft …" : "\(missing.count) \(missing.count == 1 ? "Wein" : "Weine") ohne Preis")
                             .font(Theme.serif(22)).foregroundStyle(Theme.cream)
-                        Text("Die App sucht für jeden Wein den heutigen Shop-Preis und übernimmt ihn als **Richtpreis**. Das ist nicht dein Einkaufspreis, aber gut genug für den Kellerwert. Etwa **30 Sekunden pro Wein** — lass die Seite offen.")
+                        Text("Die App sucht für jeden Wein den heutigen Shop-Preis und übernimmt ihn als **Richtpreis**. Das ist nicht dein Einkaufspreis, aber gut genug für den Kellerwert.\n\n**Runde 1** ist schnell (ein paar Sekunden pro Wein, mehrere gleichzeitig). Was dort nicht gefunden wird, sucht **Runde 2** gründlicher — das dauert pro Wein bis zu einer Minute. Lass die Seite offen.")
                             .font(.system(size: 13)).foregroundStyle(Theme.muted)
                         if let current {
                             HStack(spacing: 8) {
@@ -219,12 +223,18 @@ struct PriceBatchView: View {
         .scrollContentBackground(.hidden)
         .navigationTitle("Preise suchen")
         .navigationBarTitleDisplayMode(.inline)
+        #if DEBUG
+        .task {
+            if ProcessInfo.processInfo.environment["WEINKELLER_AUTORUN"] == "1" { await run() }
+        }
+        #endif
         .onDisappear {
             stopRequested = true
-            UIApplication.shared.isIdleTimerDisabled = false
+            Task { @MainActor in UIApplication.shared.isIdleTimerDisabled = false }
         }
     }
 
+    @MainActor
     private func run() async {
         running = true
         stopRequested = false
@@ -235,11 +245,50 @@ struct PriceBatchView: View {
             UIApplication.shared.isIdleTimerDisabled = false
         }
 
-        // Nur einmal pro Wein versuchen: was nicht gefunden wird, fliegt aus der Warteschlange.
+        // Runde 1: schnelle Suche, vier Weine gleichzeitig.
         let queue = missing
-        for (index, wine) in queue.enumerated() {
+        var slow: [Wine] = []
+        var next = 0
+        while next < queue.count && !stopRequested {
+            let lane = Array(queue[next..<min(next + 4, queue.count)])
+            next += lane.count
+            current = "Runde 1 · \(min(next, queue.count))/\(queue.count)"
+            let results = await withTaskGroup(of: (Int, Result<VinelloAPI.PriceResult, Error>).self) { group in
+                for (i, wine) in lane.enumerated() {
+                    let (n, p, v, r) = (wine.name, wine.producer, wine.vintage, wine.region)
+                    group.addTask {
+                        do { return (i, .success(try await VinelloAPI.findPrice(name: n, producer: p, vintage: v, region: r, fastOnly: true))) }
+                        catch { return (i, .failure(error)) }
+                    }
+                }
+                var out: [(Int, Result<VinelloAPI.PriceResult, Error>)] = []
+                for await item in group { out.append(item) }
+                return out.sorted { $0.0 < $1.0 }
+            }
+            for (i, outcome) in results {
+                let wine = lane[i]
+                switch outcome {
+                case .success(let result) where result.found && result.typicalCHF != nil:
+                    wine.applyPrice(result, chosen: result.typicalCHF!)
+                    done.append((wine.name, result.typicalCHF))
+                case .success:
+                    slow.append(wine)
+                case .failure(let error):
+                    if case VinelloAPI.Failure.offline = error {
+                        lastError = error.localizedDescription
+                        stopRequested = true
+                    } else {
+                        slow.append(wine)
+                    }
+                }
+            }
+            try? context.save()
+        }
+
+        // Runde 2: gründliche, langsame Suche für den Rest — einer nach dem anderen.
+        for (index, wine) in slow.enumerated() {
             if stopRequested { break }
-            current = "\(index + 1)/\(queue.count): \(wine.name) \(wine.vintage)"
+            current = "Runde 2 · \(index + 1)/\(slow.count): \(wine.name) \(wine.vintage)"
             do {
                 let result = try await VinelloAPI.findPrice(name: wine.name, producer: wine.producer,
                                                             vintage: wine.vintage, region: wine.region)
@@ -251,16 +300,16 @@ struct PriceBatchView: View {
                     done.append((wine.name, nil))
                 }
                 lastError = nil
+                // Nur nach der langsamen Groq-Suche warten — sie ist pro Minute gebremst.
+                if result.method == "groq" && index < slow.count - 1 && !stopRequested {
+                    try? await Task.sleep(nanoseconds: 20_000_000_000)
+                }
             } catch VinelloAPI.Failure.offline {
                 lastError = VinelloAPI.Failure.offline.localizedDescription
                 break
             } catch {
                 lastError = error.localizedDescription
                 done.append((wine.name, nil))
-            }
-            // Pause, damit die Gratis-Stufe nicht dauernd ausgelastet ist.
-            if index < queue.count - 1 && !stopRequested {
-                try? await Task.sleep(nanoseconds: 25_000_000_000)
             }
         }
     }

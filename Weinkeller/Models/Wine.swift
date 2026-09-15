@@ -26,6 +26,8 @@ final class Wine {
     /// Die Shops, aus denen der Richtpreis stammt — „Name|URL" pro Zeile.
     var priceSources: String = ""
     var priceCheckedAt: Date?
+    /// z. B. „Jahrgang 2018 nicht gefunden — Preis von 2020"
+    var priceNote: String = ""
     @Attribute(.externalStorage) var photo: Data?
     var createdAt: Date = Date()
 
@@ -73,6 +75,7 @@ final class Wine {
         priceRangeHigh = result.highCHF
         priceSources = result.sources.map { "\($0.shop)|\($0.url)" }.joined(separator: "\n")
         priceCheckedAt = Date()
+        priceNote = result.vintageNote ?? ""
     }
 
     var drinkWindow: ClosedRange<Int>? { DrinkWindow.years(for: self) }

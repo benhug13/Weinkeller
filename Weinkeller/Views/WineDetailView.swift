@@ -185,6 +185,9 @@ struct WineDetailView: View {
                 return (parts[0], url)
             }
             VStack(alignment: .leading, spacing: 6) {
+                if !wine.priceNote.isEmpty {
+                    Text(wine.priceNote).font(.system(size: 12)).foregroundStyle(Theme.typeSuess)
+                }
                 Text("Richtpreis aus \(sources.count) \(sources.count == 1 ? "Shop" : "Shops")\(wine.priceCheckedAt.map { ", geprüft am " + $0.formatted(date: .abbreviated, time: .omitted) } ?? "")")
                     .font(.system(size: 12)).foregroundStyle(Theme.muted)
                 HStack(spacing: 12) {
