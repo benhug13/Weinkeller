@@ -73,32 +73,88 @@ enum WineImport {
         return mapping
     }
 
-    struct Preview {
-        var importable: Int      // Zeilen mit Namen
-        var skipped: Int         // Zeilen ohne Namen
-        var bottles: Int         // Flaschen insgesamt (Anzahl-Spalte berücksichtigt)
-        var placed: Int          // davon mit erkanntem Platz
-        var samples: [String]    // die ersten Namen, zur Kontrolle
+    /// Ein **Vorschlag**, noch kein Wein im Keller.
+    ///
+    /// ⭐ Warum es diesen Zwischenschritt gibt: Aus einer Liste — und erst recht aus einem Foto —
+    /// kommt nie alles richtig heraus. Der Besitzer soll jede Zeile **sehen, ändern und
+    /// wegwerfen** können, bevor irgendetwas im Keller landet. Erst „Übernehmen" schreibt.
+    struct Draft: Identifiable, Equatable {
+        var id = UUID()
+        var name = ""
+        var producer = ""
+        var vintage = ""
+        var type: WineType = .rot
+        var region = ""
+        var grape = ""
+        var price: Double?
+        var note = ""
+        var count = 1
+        /// Die Platzangaben, wie sie in der Liste standen. Gesucht wird der Platz erst beim
+        /// Übernehmen — der Keller kann sich bis dahin noch ändern.
+        var fridgeText = ""
+        var shelfText = ""
+        var slotText = ""
+        /// Zeilennummer in der Liste, damit man eine Zeile im Zweifel wiederfindet.
+        var sourceLine: Int?
+
+        var hasName: Bool { !name.trimmingCharacters(in: .whitespaces).isEmpty }
+
+        /// Kurze Zeile unter dem Namen: „2019 · 3 Flaschen · CHF 24.50"
+        var summaryLine: String {
+            var parts: [String] = []
+            if !vintage.isEmpty { parts.append(vintage) }
+            parts.append(count == 1 ? "1 Flasche" : "\(count) Flaschen")
+            if let price { parts.append("CHF " + String(format: price == price.rounded() ? "%.0f" : "%.2f", price)) }
+            if !region.isEmpty { parts.append(region) }
+            return parts.joined(separator: " · ")
+        }
     }
 
-    static func preview(table: CSV.Table, mapping: [Field: Int], fridges: [Fridge]) -> Preview {
-        var importable = 0, skipped = 0, bottles = 0, placed = 0
-        var samples: [String] = []
-
-        for row in table.rows {
-            let name = table.value(row, at: mapping[.name])
-            guard !name.isEmpty else { skipped += 1; continue }
-            importable += 1
-            if samples.count < 4 { samples.append(name) }
-
-            let count = bottleCount(table: table, row: row, mapping: mapping)
-            bottles += count
-            if resolvePlace(table: table, row: row, mapping: mapping, fridges: fridges) != nil {
-                placed += count
-            }
+    /// Tabelle + Spaltenzuordnung → Vorschläge. Zeilen ohne Namen fallen weg.
+    static func drafts(table: CSV.Table, mapping: [Field: Int]) -> [Draft] {
+        table.rows.enumerated().compactMap { index, row in
+            let name = table.value(row, at: mapping[.name]).trimmingCharacters(in: .whitespaces)
+            guard !name.isEmpty else { return nil }
+            return Draft(
+                name: name,
+                producer: table.value(row, at: mapping[.producer]),
+                vintage: vintage(from: table.value(row, at: mapping[.vintage])),
+                type: wineType(from: table.value(row, at: mapping[.type])),
+                region: table.value(row, at: mapping[.region]),
+                grape: table.value(row, at: mapping[.grape]),
+                price: price(from: table.value(row, at: mapping[.price])),
+                note: table.value(row, at: mapping[.note]),
+                count: bottleCount(raw: table.value(row, at: mapping[.count])),
+                fridgeText: table.value(row, at: mapping[.fridge]),
+                shelfText: table.value(row, at: mapping[.shelf]),
+                slotText: table.value(row, at: mapping[.slot]),
+                sourceLine: index + 1
+            )
         }
-        return Preview(importable: importable, skipped: skipped, bottles: bottles,
-                       placed: placed, samples: samples)
+    }
+
+    /// Ein gelesenes Etikett (eine einzelne Flasche) als Vorschlag.
+    static func draft(fromLabel label: VinelloAPI.LabelResult) -> Draft {
+        Draft(name: label.name, producer: label.producer, vintage: label.vintage,
+              type: label.wineType, region: label.region, grape: label.grape)
+    }
+
+    struct Summary {
+        var wines: Int
+        var bottles: Int
+        var placed: Int
+        var withoutName: Int
+    }
+
+    static func summary(drafts: [Draft], fridges: [Fridge]) -> Summary {
+        var wines = 0, bottles = 0, placed = 0, withoutName = 0
+        for draft in drafts {
+            guard draft.hasName else { withoutName += 1; continue }
+            wines += 1
+            bottles += draft.count
+            if resolvePlace(draft: draft, fridges: fridges) != nil { placed += 1 }
+        }
+        return Summary(wines: wines, bottles: bottles, placed: placed, withoutName: withoutName)
     }
 
     struct Result {
@@ -107,35 +163,30 @@ enum WineImport {
         var unplaced: Int
     }
 
-    static func run(table: CSV.Table,
-                    mapping: [Field: Int],
-                    fridges: [Fridge],
-                    context: ModelContext) -> Result {
+    static func run(drafts: [Draft], fridges: [Fridge], context: ModelContext) -> Result {
         var wineCount = 0, bottleTotal = 0, unplaced = 0
 
-        for row in table.rows {
-            let name = table.value(row, at: mapping[.name])
-            guard !name.isEmpty else { continue }
+        for draft in drafts {
+            guard draft.hasName else { continue }
 
             let wine = Wine(
-                name: name,
-                producer: table.value(row, at: mapping[.producer]),
-                vintage: vintage(from: table.value(row, at: mapping[.vintage])),
-                type: wineType(from: table.value(row, at: mapping[.type])),
-                region: table.value(row, at: mapping[.region]),
-                grape: table.value(row, at: mapping[.grape]),
-                price: price(from: table.value(row, at: mapping[.price])),
-                note: table.value(row, at: mapping[.note])
+                name: draft.name.trimmingCharacters(in: .whitespaces),
+                producer: draft.producer,
+                vintage: draft.vintage,
+                type: draft.type,
+                region: draft.region,
+                grape: draft.grape,
+                price: draft.price,
+                note: draft.note
             )
             context.insert(wine)
             wineCount += 1
 
-            let count = bottleCount(table: table, row: row, mapping: mapping)
-            let place = resolvePlace(table: table, row: row, mapping: mapping, fridges: fridges)
+            let place = resolvePlace(draft: draft, fridges: fridges)
 
-            for index in 0..<count {
+            for index in 0..<max(1, draft.count) {
                 let bottle = Bottle(wine: wine, shelf: nil, slot: 0)
-                // Nur die erste Flasche bekommt den Platz aus der Tabelle — in einem Fach
+                // Nur die erste Flasche bekommt den Platz aus der Liste — in einem Fach
                 // steht eine Flasche. Die weiteren wandern in „noch einräumen".
                 if index == 0, let place {
                     bottle.shelf = place.shelf
@@ -153,8 +204,7 @@ enum WineImport {
 
     // MARK: - Umrechnungen
 
-    private static func bottleCount(table: CSV.Table, row: [String], mapping: [Field: Int]) -> Int {
-        let raw = table.value(row, at: mapping[.count])
+    static func bottleCount(raw: String) -> Int {
         guard !raw.isEmpty, let n = Int(raw.filter(\.isNumber)) else { return 1 }
         return max(1, min(n, 200))   // Tippfehler in der Tabelle sollen nicht 9999 Flaschen anlegen
     }
@@ -165,7 +215,7 @@ enum WineImport {
     }
 
     /// „24.50", „24,50", „CHF 24.50" → 24.5
-    private static func price(from raw: String) -> Double? {
+    static func price(from raw: String) -> Double? {
         let cleaned = raw.replacingOccurrences(of: ",", with: ".")
             .filter { $0.isNumber || $0 == "." }
         guard !cleaned.isEmpty else { return nil }
@@ -186,13 +236,9 @@ enum WineImport {
     /// Sucht Kühlschrank, Regal und Fach aus der Tabelle im eingerichteten Keller.
     /// Findet es nichts Passendes, kommt die Flasche in „noch einräumen" — lieber ohne
     /// Platz als am falschen.
-    private static func resolvePlace(table: CSV.Table,
-                                     row: [String],
-                                     mapping: [Field: Int],
+    private static func resolvePlace(draft: Draft,
                                      fridges: [Fridge]) -> (shelf: Shelf, slot: Int)? {
-        let fridgeText = table.value(row, at: mapping[.fridge])
-        let shelfText  = table.value(row, at: mapping[.shelf])
-        let slotText   = table.value(row, at: mapping[.slot])
+        let (fridgeText, shelfText, slotText) = (draft.fridgeText, draft.shelfText, draft.slotText)
         guard !shelfText.isEmpty || !slotText.isEmpty else { return nil }
 
         let fridge = match(fridgeText, in: fridges.map { ($0.name, $0) }) ?? fridges.first

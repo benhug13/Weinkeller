@@ -210,15 +210,15 @@ struct OnboardingView: View {
 
                 Card {
                     VStack(alignment: .leading, spacing: 12) {
-                        guideStep(1, "Die Liste darf fast alles sein: **Excel, Word, PDF**, eine **Notiz** zum Einfügen oder ein **Foto** vom Blatt.")
+                        guideStep(1, "Die Liste darf fast alles sein: **Excel, Word, PDF**, eine **Notiz** zum Einfügen oder ein **Foto** vom Blatt. Hast du gar keine Liste, geht auch das **Foto einer einzelnen Flasche**.")
                         guideStep(2, "Liegt sie auf dem Computer: per **AirDrop**, Mail an dich selbst oder iCloud Drive aufs iPhone.")
-                        guideStep(3, "Hier auswählen. Die App zeigt dir die Spalten, und du sagst, **welche was ist**.")
+                        guideStep(3, "Danach siehst du **jeden gefundenen Wein als Zeile**: antippen zum Ändern, **✕** wirft weg, was nicht dazugehört. Erst dann wird übernommen.")
                         guideStep(4, "Steht kein Fach dabei, macht nichts: Die App geht danach **Fach für Fach** mit dir durch.")
                     }
                 }
 
                 Card {
-                    Text("Alles bleibt auf deinem Gerät. Nichts geht ins Internet.")
+                    Text("Listen liest die App auf deinem Gerät. Nur beim Foto einer **einzelnen Flasche** wird das Etikett über das Internet gelesen.")
                         .font(.system(size: 13))
                         .foregroundStyle(Theme.muted)
                 }
