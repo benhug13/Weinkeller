@@ -264,7 +264,7 @@ struct SettingsView: View {
 
     private var listSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            SectionLabel(text: "Bestehende Liste")
+            SectionLabel(text: wines.isEmpty ? "Bestehende Liste" : "Weitere Sammlung")
             Button { importing = true } label: {
                 Card {
                     HStack(spacing: 13) {
@@ -273,10 +273,13 @@ struct SettingsView: View {
                             .foregroundStyle(Theme.wineLit)
                             .frame(width: 26)
                         VStack(alignment: .leading, spacing: 3) {
-                            Text("Liste übernehmen")
+                            Text(wines.isEmpty ? "Liste übernehmen" : "Weitere Liste dazunehmen")
                                 .font(.system(size: 15, weight: .medium))
                                 .foregroundStyle(Theme.cream)
-                            Text("Excel, Word, PDF, Text oder Foto — nichts abtippen.")
+                            // Typischer Fall: eine ganze Sammlung dazugekauft, samt Liste des Vorbesitzers.
+                            Text(wines.isEmpty
+                                 ? "Excel, Word, PDF, Text oder Foto — nichts abtippen."
+                                 : "Neue Sammlung gekauft? Ihre Liste kommt zu deinem Keller dazu — nichts wird ersetzt.")
                                 .font(.system(size: 12))
                                 .foregroundStyle(Theme.muted)
                                 .multilineTextAlignment(.leading)

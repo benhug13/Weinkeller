@@ -190,42 +190,84 @@ enum WineImport {
         var bottles: Int
         var placed: Int
         var withoutName: Int
+        /// Weine, die schon im Keller sind — ihre Flaschen kommen dort dazu.
+        var alreadyThere: Int = 0
     }
 
-    static func summary(drafts: [Draft], fridges: [Fridge]) -> Summary {
-        var wines = 0, bottles = 0, placed = 0, withoutName = 0
+    static func summary(drafts: [Draft], fridges: [Fridge], cellar: [Wine] = []) -> Summary {
+        var wines = 0, bottles = 0, placed = 0, withoutName = 0, alreadyThere = 0
         for draft in drafts {
             guard draft.hasName else { withoutName += 1; continue }
             wines += 1
             bottles += draft.count
             if resolvePlace(draft: draft, fridges: fridges) != nil { placed += 1 }
+            if existing(for: draft, in: cellar) != nil { alreadyThere += 1 }
         }
-        return Summary(wines: wines, bottles: bottles, placed: placed, withoutName: withoutName)
+        return Summary(wines: wines, bottles: bottles, placed: placed, withoutName: withoutName,
+                       alreadyThere: alreadyThere)
+    }
+
+    /// Derselbe Wein, schon im Keller? Gleicher Name und Jahrgang; der Winzer muss nur
+    /// passen, wenn beide einen haben. Wer eine ganze Sammlung dazukauft, hat oft Weine
+    /// doppelt — die sollen **Flaschen dazubekommen**, nicht ein zweites Mal im Keller stehen.
+    static func existing(for draft: Draft, in cellar: [Wine]) -> Wine? {
+        let name = TextMatching.normalize(draft.name)
+        let producer = TextMatching.normalize(draft.producer)
+        guard !name.isEmpty else { return nil }
+        return cellar.first { wine in
+            guard TextMatching.normalize(wine.name) == name,
+                  wine.vintage.trimmingCharacters(in: .whitespaces) == draft.vintage.trimmingCharacters(in: .whitespaces)
+            else { return false }
+            let other = TextMatching.normalize(wine.producer)
+            return producer.isEmpty || other.isEmpty || producer == other
+        }
     }
 
     struct Result {
         var wines: Int
         var bottles: Int
         var unplaced: Int
+        /// Davon Weine, die schon im Keller waren und nur Flaschen dazubekommen haben.
+        var merged: Int = 0
     }
 
+    /// Schreibt die Vorschläge in den Keller. **Nimmt nie etwas weg** — eine zweite Liste
+    /// kommt zum bestehenden Keller dazu. Verglichen wird nur mit dem Keller *vor* dem
+    /// Import: Steht ein Wein in der neuen Liste zweimal (z. B. Magnum und 0.75 l), bleiben
+    /// es zwei Einträge, genau wie in der Liste.
     static func run(drafts: [Draft], fridges: [Fridge], context: ModelContext) -> Result {
-        var wineCount = 0, bottleTotal = 0, unplaced = 0
+        var wineCount = 0, bottleTotal = 0, unplaced = 0, merged = 0
+        let cellar = (try? context.fetch(FetchDescriptor<Wine>())) ?? []
 
         for draft in drafts {
             guard draft.hasName else { continue }
 
-            let wine = Wine(
-                name: draft.name.trimmingCharacters(in: .whitespaces),
-                producer: draft.producer,
-                vintage: draft.vintage,
-                type: draft.type,
-                region: draft.region,
-                grape: draft.grape,
-                price: draft.price,
-                note: draft.note
-            )
-            context.insert(wine)
+            let wine: Wine
+            if let known = existing(for: draft, in: cellar) {
+                // Nur Lücken füllen — was der Besitzer schon eingetragen hat, bleibt.
+                if known.producer.isEmpty { known.producer = draft.producer }
+                if known.region.isEmpty { known.region = draft.region }
+                if known.grape.isEmpty { known.grape = draft.grape }
+                if known.price == nil { known.price = draft.price }
+                let note = draft.note.trimmingCharacters(in: .whitespaces)
+                if !note.isEmpty, !known.note.localizedCaseInsensitiveContains(note) {
+                    known.note = known.note.isEmpty ? note : known.note + "\n" + note
+                }
+                wine = known
+                merged += 1
+            } else {
+                wine = Wine(
+                    name: draft.name.trimmingCharacters(in: .whitespaces),
+                    producer: draft.producer,
+                    vintage: draft.vintage,
+                    type: draft.type,
+                    region: draft.region,
+                    grape: draft.grape,
+                    price: draft.price,
+                    note: draft.note
+                )
+                context.insert(wine)
+            }
             wineCount += 1
 
             let place = resolvePlace(draft: draft, fridges: fridges)
@@ -247,7 +289,7 @@ enum WineImport {
             }
         }
         try? context.save()
-        return Result(wines: wineCount, bottles: bottleTotal, unplaced: unplaced)
+        return Result(wines: wineCount, bottles: bottleTotal, unplaced: unplaced, merged: merged)
     }
 
     // MARK: - Umrechnungen

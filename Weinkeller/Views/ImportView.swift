@@ -12,6 +12,7 @@ struct ImportView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     @Query(sort: \Fridge.order) private var fridges: [Fridge]
+    @Query private var cellar: [Wine]
 
     @State private var picking = false
     @State private var table: CSV.Table?
@@ -262,7 +263,7 @@ struct ImportView: View {
     /// Jede erkannte Zeile als eigene Karte: antippen zum Ändern, **X zum Wegwerfen**.
     /// Nichts davon ist im Keller, solange „Übernehmen" nicht gedrückt ist.
     private var reviewSection: some View {
-        let summary = WineImport.summary(drafts: drafts, fridges: fridges)
+        let summary = WineImport.summary(drafts: drafts, fridges: fridges, cellar: cellar)
 
         return VStack(alignment: .leading, spacing: 18) {
             Card {
@@ -280,6 +281,16 @@ struct ImportView: View {
                         .font(.system(size: 12))
                         .foregroundStyle(Theme.mutedDim)
                         .padding(.top, 2)
+                }
+            }
+
+            if !cellar.isEmpty {
+                Card {
+                    Text(summary.alreadyThere == 0
+                         ? "Die Liste kommt **zu deinen \(cellar.count) Weinen dazu** — nichts im Keller wird ersetzt."
+                         : "Die Liste kommt **zu deinen \(cellar.count) Weinen dazu** — nichts wird ersetzt. **\(summary.alreadyThere) \(summary.alreadyThere == 1 ? "Wein hast" : "Weine hast") du schon**: dort kommen nur die Flaschen dazu.")
+                        .font(.system(size: 13))
+                        .foregroundStyle(Theme.muted)
                 }
             }
 
@@ -337,6 +348,12 @@ struct ImportView: View {
                     Text(draft.summaryLine)
                         .font(.system(size: 12))
                         .foregroundStyle(Theme.mutedDim)
+                    if draft.hasName, WineImport.existing(for: draft, in: cellar) != nil {
+                        Label("Schon im Keller — Flaschen kommen dazu", systemImage: "plus.circle.fill")
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundStyle(Theme.wineLit)
+                            .padding(.top, 1)
+                    }
                 }
                 Spacer(minLength: 0)
                 Image(systemName: "pencil")
@@ -446,6 +463,9 @@ struct ImportView: View {
                         .font(Theme.serif(22))
                         .foregroundStyle(Theme.cream)
                     line("Weine", "\(result.wines)")
+                    if result.merged > 0 {
+                        line("davon schon im Keller", "\(result.merged)")
+                    }
                     line("Flaschen", "\(result.bottles)")
                     if result.unplaced > 0 {
                         line("noch einzuräumen", "\(result.unplaced)", warn: true)
