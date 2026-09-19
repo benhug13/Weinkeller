@@ -56,7 +56,7 @@ struct PriceUpdateView: View {
                     SecondaryButton(title: "Anhalten", systemImage: "stop.fill") { stop() }
                 } else if !started {
                     PrimaryButton(title: "Preise prüfen", systemImage: "arrow.triangle.2.circlepath",
-                                  enabled: !candidates.isEmpty) { start() }
+                                  enabled: !candidates.isEmpty && usage?.left != 0) { start() }
                 }
 
                 if started { resultSection }
@@ -90,7 +90,7 @@ struct PriceUpdateView: View {
         Card {
             VStack(alignment: .leading, spacing: 8) {
                 Text(running ? "Prüfe \(checked) von \(total) …"
-                     : started ? "Fertig geprüft"
+                     : started ? (lastError == nil ? "Fertig geprüft" : "Angehalten")
                      : "\(candidates.count) \(candidates.count == 1 ? "Wein" : "Weine") mit Preis")
                     .font(Theme.serif(22)).foregroundStyle(Theme.cream)
                 if running {
@@ -124,9 +124,11 @@ struct PriceUpdateView: View {
                     }
                     ProgressView(value: usage.share)
                         .tint(usage.share > 0.85 ? Theme.typeSuess : Theme.wineLit)
-                    Text("\(usage.used) von \(usage.limit) gebraucht, noch \(usage.left) frei. Diese Prüfung braucht etwa **\(needed)** (\(usage.perWine) pro Wein).")
+                    Text(usage.left == 0
+                         ? "Alle \(usage.limit) Gratis-Suchen sind diesen Monat gebraucht. Nächsten Monat geht es wieder."
+                         : "\(usage.used) von \(usage.limit) gebraucht, noch \(usage.left) frei. Diese Prüfung braucht etwa **\(needed)** (rund \(usage.perWine) pro Wein).")
                         .font(.system(size: 12)).foregroundStyle(Theme.muted)
-                    if needed > usage.left {
+                    if needed > usage.left && usage.left > 0 {
                         Text("Reicht für etwa \(usage.left / max(usage.perWine, 1)) Weine. Die übrigen findet die Suche erst nächsten Monat — sie bleiben dann einfach beim alten Preis.")
                             .font(.system(size: 12)).foregroundStyle(Theme.typeSuess)
                     }
@@ -271,7 +273,9 @@ struct PriceUpdateView: View {
                 let wine = lane[i]
                 checked += 1
                 if let error {
-                    if case VinelloAPI.Failure.offline = error {
+                    // Offline oder Kontingent leer: aufhören und klar sagen, warum — nicht jeden
+                    // weiteren Wein still als „nicht gefunden" zählen.
+                    if let failure = error as? VinelloAPI.Failure, failure.isQuota || failure == .offline {
                         lastError = error.localizedDescription
                         return
                     }

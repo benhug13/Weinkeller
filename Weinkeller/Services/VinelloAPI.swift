@@ -47,16 +47,22 @@ enum VinelloAPI {
         var method: String?
     }
 
-    enum Failure: LocalizedError {
+    enum Failure: LocalizedError, Equatable {
+        /// Gratis-Kontingent leer (heute oder diesen Monat). Der Text kommt vom Server und sagt,
+        /// **wann** es wieder geht — nochmals versuchen bringt nichts.
+        case quota(String)
         case offline, busy, server(String)
 
         var errorDescription: String? {
             switch self {
+            case .quota(let msg):  return msg
             case .offline:         return "Keine Internetverbindung. Im Keller ohne Empfang geht das nicht — später nochmals versuchen."
             case .busy:            return "Der Dienst ist gerade ausgelastet. In einer Minute nochmals versuchen."
             case .server(let msg): return msg
             }
         }
+
+        var isQuota: Bool { if case .quota = self { return true }; return false }
     }
 
     /// Etikett-Foto → Felder. Das Bild wird vorher verkleinert (1024 px), das reicht zum Lesen.
@@ -76,7 +82,7 @@ enum VinelloAPI {
                                            "region": region, "fast": fastOnly])
     }
 
-    /// Gratis-Kontingent der schnellen Preissuche (Tavily): pro Monat, pro Wein 2 Suchen.
+    /// Gratis-Kontingent der schnellen Preissuche (Tavily): pro Monat, pro Wein im Schnitt ≈ 3 Suchen.
     struct Usage: Decodable {
         var used: Int
         var limit: Int
@@ -92,7 +98,7 @@ enum VinelloAPI {
 
     // MARK: - Netz
 
-    private struct ErrorBody: Decodable { var error: String?; var retryAfter: Double? }
+    private struct ErrorBody: Decodable { var error: String?; var retryAfter: Double?; var quota: String? }
 
     /// Ist Groq kurz ausgelastet (Gratis-Stufe: Tokens pro Minute), wartet die App die
     /// genannte Zeit und versucht es noch zweimal — der Besitzer merkt davon nur ein paar Sekunden.
@@ -117,6 +123,9 @@ enum VinelloAPI {
             if status == 200 { return try JSONDecoder().decode(T.self, from: data) }
 
             let info = try? JSONDecoder().decode(ErrorBody.self, from: data)
+            if info?.quota != nil {
+                throw Failure.quota(info?.error ?? "Die Gratis-Anfragen sind aufgebraucht. Später nochmals versuchen.")
+            }
             if status == 429 {
                 guard attempt < 2 else { throw Failure.busy }
                 let wait = min(max(info?.retryAfter ?? 20, 3), 45)

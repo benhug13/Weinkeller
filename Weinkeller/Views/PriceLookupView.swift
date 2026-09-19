@@ -308,10 +308,15 @@ struct PriceBatchView: View {
                 case .success:
                     slow.append(wine)
                 case .failure(let error):
-                    if case VinelloAPI.Failure.offline = error {
+                    if let failure = error as? VinelloAPI.Failure, failure == .offline {
                         lastError = error.localizedDescription
                         stopRequested = true
                     } else {
+                        // Monat bei der schnellen Suche leer: Runde 2 (Groq) kann trotzdem noch
+                        // suchen. Das dauert länger — der Besitzer soll wissen, warum.
+                        if let failure = error as? VinelloAPI.Failure, failure.isQuota {
+                            lastError = failure.localizedDescription + " Die gründliche Suche läuft trotzdem weiter, aber langsamer."
+                        }
                         slow.append(wine)
                     }
                 }
@@ -341,6 +346,10 @@ struct PriceBatchView: View {
                 }
             } catch VinelloAPI.Failure.offline {
                 lastError = VinelloAPI.Failure.offline.localizedDescription
+                break
+            } catch let failure as VinelloAPI.Failure where failure.isQuota {
+                // Auch das Tageskontingent ist leer — weitersuchen bringt heute nichts.
+                lastError = failure.localizedDescription
                 break
             } catch {
                 if Task.isCancelled || stopRequested { break }   // Abbruch ist kein Fehler
