@@ -164,6 +164,7 @@ struct PriceLookupView: View {
 /// suchen pro Minute. Solange diese Seite offen ist, bleibt der Bildschirm an.
 struct PriceBatchView: View {
     @Environment(\.modelContext) private var context
+    @Environment(\.dismiss) private var dismiss
     @Query(sort: \Wine.name) private var wines: [Wine]
 
     @State private var running = false
@@ -171,15 +172,23 @@ struct PriceBatchView: View {
     @State private var done: [(name: String, price: Double?)] = []
     @State private var stopRequested = false
     @State private var lastError: String?
+    @State private var task: Task<Void, Never>?
 
-    private var missing: [Wine] { wines.filter { ($0.price ?? 0) <= 0 && !$0.name.isEmpty } }
+    /// Ausgetrunkene Weine (0 Flaschen) zählen nicht zum Kellerwert — für sie lohnt die Suche nicht.
+    private var missing: [Wine] {
+        wines.filter { ($0.price ?? 0) <= 0 && !$0.name.isEmpty && !$0.bottlesInCellar.isEmpty }
+    }
+
+    private var foundCount: Int { done.filter { $0.price != nil }.count }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
                 Card {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(running ? "Suche läuft …" : "\(missing.count) \(missing.count == 1 ? "Wein" : "Weine") ohne Preis")
+                        Text(running ? "Suche läuft …"
+                             : !done.isEmpty ? "\(foundCount) \(foundCount == 1 ? "Preis" : "Preise") übernommen"
+                             : "\(missing.count) \(missing.count == 1 ? "Wein" : "Weine") ohne Preis")
                             .font(Theme.serif(22)).foregroundStyle(Theme.cream)
                         Text("Die App sucht für jeden Wein den heutigen Shop-Preis und übernimmt ihn als **Richtpreis**. Das ist nicht dein Einkaufspreis, aber gut genug für den Kellerwert.\n\n**Runde 1** ist schnell (ein paar Sekunden pro Wein, mehrere gleichzeitig). Was dort nicht gefunden wird, sucht **Runde 2** gründlicher — das dauert pro Wein bis zu einer Minute. Lass die Seite offen.")
                             .font(.system(size: 13)).foregroundStyle(Theme.muted)
@@ -197,10 +206,11 @@ struct PriceBatchView: View {
                 }
 
                 if running {
-                    SecondaryButton(title: "Anhalten", systemImage: "stop.fill") { stopRequested = true }
+                    SecondaryButton(title: "Anhalten", systemImage: "stop.fill") { stop() }
                 } else {
-                    PrimaryButton(title: "Preise suchen", systemImage: "magnifyingglass", enabled: !missing.isEmpty) {
-                        Task { await run() }
+                    PrimaryButton(title: done.isEmpty ? "Preise suchen" : "Weitersuchen",
+                                  systemImage: "magnifyingglass", enabled: !missing.isEmpty) {
+                        start()
                     }
                 }
 
@@ -223,15 +233,33 @@ struct PriceBatchView: View {
         .scrollContentBackground(.hidden)
         .navigationTitle("Preise suchen")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            // Jederzeit raus: was schon gefunden ist, ist bereits gespeichert.
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Fertig") { stop(); dismiss() }.fontWeight(.semibold)
+            }
+        }
         #if DEBUG
         .task {
-            if ProcessInfo.processInfo.environment["WEINKELLER_AUTORUN"] == "1" { await run() }
+            if ProcessInfo.processInfo.environment["WEINKELLER_AUTORUN"] == "1" { start() }
         }
         #endif
         .onDisappear {
-            stopRequested = true
+            stop()
             Task { @MainActor in UIApplication.shared.isIdleTimerDisabled = false }
         }
+    }
+
+    private func start() {
+        task = Task { await run() }
+    }
+
+    /// Sofort aufhören — auch mitten in einer Minute langen Suche oder in der Pause danach.
+    /// Die Preise, die schon da sind, bleiben; nur der laufende Wein wird nicht mehr fertig.
+    private func stop() {
+        stopRequested = true
+        task?.cancel()
+        task = nil
     }
 
     @MainActor
@@ -292,6 +320,7 @@ struct PriceBatchView: View {
             do {
                 let result = try await VinelloAPI.findPrice(name: wine.name, producer: wine.producer,
                                                             vintage: wine.vintage, region: wine.region)
+                if Task.isCancelled || stopRequested { break }
                 if result.found, let typical = result.typicalCHF {
                     wine.applyPrice(result, chosen: typical)
                     try? context.save()
@@ -308,6 +337,7 @@ struct PriceBatchView: View {
                 lastError = VinelloAPI.Failure.offline.localizedDescription
                 break
             } catch {
+                if Task.isCancelled || stopRequested { break }   // Abbruch ist kein Fehler
                 lastError = error.localizedDescription
                 done.append((wine.name, nil))
             }

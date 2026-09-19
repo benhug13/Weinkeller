@@ -61,6 +61,13 @@ enum DebugSeed {
                 }
             }
         }
+        // Ein ausgetrunkener Wein: steht noch in der Liste, darf aber nicht „jetzt trinken" rufen.
+        let empty = Wine(name: "Aglianico del Vulture", producer: "Elena Fucci", vintage: "2015", type: .rot,
+                         region: "Basilicata", grape: "Aglianico", price: 38, note: "Nicht mehr kaufen")
+        context.insert(empty)
+        let drunk = Bottle(wine: empty, shelf: nil, slot: 0)
+        drunk.drunkAt = Date()
+        context.insert(drunk)
         try? context.save()
     }
 }

@@ -113,7 +113,7 @@ struct WineDetailView: View {
                                 .font(Theme.serif(26))
                                 .foregroundStyle(Theme.cream)
                             Spacer()
-                            Text(wine.drinkStatus.label)
+                            Text(wine.bottlesInCellar.isEmpty ? "ausgetrunken" : wine.drinkStatus.label)
                                 .font(.system(size: 13, weight: .medium))
                                 .foregroundStyle(statusColor)
                         }
@@ -128,6 +128,7 @@ struct WineDetailView: View {
     }
 
     private var statusColor: Color {
+        if wine.bottlesInCellar.isEmpty { return Theme.mutedDim }
         switch wine.drinkStatus {
         case .ready, .lastCall: return Theme.wineLit
         case .past:             return Theme.typeSuess

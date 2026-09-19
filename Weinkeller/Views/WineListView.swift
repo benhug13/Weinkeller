@@ -51,6 +51,8 @@ struct WineListView: View {
 
     /// Was jetzt getrunken werden sollte, steht oben.
     private func rank(for wine: Wine) -> Int {
+        // Ausgetrunkene ganz nach hinten — da gibt es nichts mehr zu trinken.
+        if wine.bottlesInCellar.isEmpty { return 5 }
         switch wine.drinkStatus {
         case .lastCall: return 0
         case .past:     return 1
@@ -215,12 +217,19 @@ struct WineCard: View {
     }
 
     private var statusColor: Color {
+        if wine.bottlesInCellar.isEmpty { return Theme.mutedDim }
         switch wine.drinkStatus {
         case .ready, .lastCall: return Theme.wineLit
         case .past:             return Theme.typeSuess
         case .tooYoung:         return Theme.typeSchaum
         case .unknown:          return Theme.mutedDim
         }
+    }
+
+    /// Ohne Flasche im Keller ist „jetzt trinken" falscher Alarm. Der Wein bleibt in der
+    /// Liste (Notiz, Bewertung, zum Nachkaufen), aber ohne Trinkreife.
+    private var statusLabel: String {
+        wine.bottlesInCellar.isEmpty ? "ausgetrunken" : wine.drinkStatus.label
     }
 
     var body: some View {
@@ -242,7 +251,7 @@ struct WineCard: View {
                     // Kein Farbpunkt hier: der Anfangsbuchstabe links trägt die Farbe
                     // der Weinart schon. Zwei Farbzeichen nebeneinander verwirren nur.
                     HStack(spacing: 8) {
-                        Text(wine.drinkStatus.label)
+                        Text(statusLabel)
                             .font(.system(size: 11))
                             .foregroundStyle(statusColor)
                             .lineLimit(1)
