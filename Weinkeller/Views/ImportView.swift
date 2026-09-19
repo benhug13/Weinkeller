@@ -554,7 +554,7 @@ struct ImportView: View {
         }
         fileName = name
         self.source = source
-        mapping = WineImport.guessMapping(header: parsed.header)
+        mapping = WineImport.guessMapping(table: parsed)
         let found = WineImport.drafts(table: parsed, mapping: mapping)
         guard !found.isEmpty else {
             error = "In der Liste wurden keine Namen gefunden. Ist es vielleicht das Etikett einer einzelnen Flasche? Dann „Eine einzelne Flasche“ nehmen."
@@ -615,7 +615,7 @@ private struct DraftEditor: View {
 
                 Section {
                     TextField("Jahrgang", text: $draft.vintage).keyboardType(.numberPad)
-                    Stepper("Flaschen: \(draft.count)", value: $draft.count, in: 1...200)
+                    Stepper("Flaschen: \(draft.count)", value: $draft.count, in: 0...200)
                     TextField("Preis CHF", text: $priceText).keyboardType(.decimalPad)
                     TextField("Region", text: $draft.region)
                     TextField("Traube", text: $draft.grape)

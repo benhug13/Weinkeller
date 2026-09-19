@@ -9,7 +9,7 @@ enum WineImport {
 
     /// Die Felder, die wir aus einer Tabelle brauchen können.
     enum Field: String, CaseIterable, Identifiable {
-        case name, producer, vintage, type, region, grape, price, count
+        case name, producer, vintage, type, region, area, grape, price, count
         case fridge, shelf, slot, note
 
         var id: String { rawValue }
@@ -21,6 +21,7 @@ enum WineImport {
             case .vintage:  return "Jahrgang"
             case .type:     return "Art"
             case .region:   return "Region"
+            case .area:     return "Gebiet"
             case .grape:    return "Traube"
             case .price:    return "Preis"
             case .count:    return "Anzahl Flaschen"
@@ -37,19 +38,28 @@ enum WineImport {
         /// englische und französische Kopfzeilen kommen alle vor.
         var hints: [String] {
             switch self {
-            case .name:     return ["name", "wein", "bezeichnung", "vin", "wine", "titel", "produkt"]
-            case .producer: return ["winzer", "produzent", "erzeuger", "domaine", "château", "chateau", "weingut", "producer"]
-            case .vintage:  return ["jahrgang", "jahr", "vintage", "millesime", "millésime"]
+            case .name:     return ["name", "wein", "bezeichnung", "vin", "wine", "titel", "produkt",
+                                    "description", "beschreibung", "designation", "cuvee", "etikett", "label"]
+            case .producer: return ["winzer", "produzent", "erzeuger", "domaine", "château", "chateau", "weingut", "producer",
+                                    "hersteller", "produttore", "cantina", "bodega", "estate"]
+            case .vintage:  return ["jahrgang", "jahr", "vintage", "millesime", "millésime", "year", "annee", "anno"]
             case .type:     return ["art", "typ", "farbe", "kategorie", "type", "couleur"]
-            case .region:   return ["region", "gebiet", "herkunft", "land", "appellation", "origin"]
+            case .region:   return ["region", "herkunft", "land", "origin", "country", "pays"]
+            case .area:     return ["gebiet", "appellation", "area", "anbaugebiet", "subregion", "lage"]
             case .grape:    return ["traube", "rebsorte", "sorte", "grape", "cepage", "cépage"]
-            case .price:    return ["preis", "chf", "kosten", "price", "wert", "einkauf"]
-            case .count:    return ["anzahl", "menge", "flaschen", "stück", "stk", "count", "quantity", "bestand"]
+            case .price:    return ["preis", "chf", "kosten", "price", "wert", "einkauf", "prix", "prezzo"]
+            case .count:    return ["anzahl", "menge", "flaschen", "stück", "stk", "count", "quantity", "bestand",
+                                    "qty", "qte", "quantite"]
             case .fridge:   return ["kühlschrank", "kuehlschrank", "schrank", "gerät", "geraet", "lager"]
             case .shelf:    return ["regal", "tablar", "reihe", "ebene", "shelf"]
             case .slot:     return ["fach", "platz", "position", "slot"]
-            case .note:     return ["notiz", "bemerkung", "kommentar", "note", "remarks"]
+            case .note:     return ["notiz", "bemerkung", "kommentar", "note", "remarks", "comment"]
             }
+        }
+
+        /// „Drink Year" oder „Trinkreif ab" ist eine Jahreszahl, aber kein Jahrgang.
+        func rejects(_ normalizedTitle: String) -> Bool {
+            self == .vintage && ["drink", "trink", "boire", "reif", "ready"].contains { normalizedTitle.contains($0) }
         }
     }
 
@@ -57,18 +67,45 @@ enum WineImport {
     static func guessMapping(header: [String]) -> [Field: Int] {
         var mapping: [Field: Int] = [:]
         var used = Set<Int>()
+        let titles = header.map(TextMatching.normalize)
 
-        for field in Field.allCases {
-            let hit = header.enumerated().first { index, title in
-                guard !used.contains(index) else { return false }
-                let normalized = TextMatching.normalize(title)
-                guard !normalized.isEmpty else { return false }
-                return field.hints.contains { normalized.contains(TextMatching.normalize($0)) }
+        // Erst genaue Treffer, dann Teiltreffer — sonst nimmt „Region" die Spalte „Subregion",
+        // obwohl daneben eine Spalte genau „Region" heisst.
+        for exact in [true, false] {
+            for field in Field.allCases where mapping[field] == nil {
+                let hit = titles.indices.first { index in
+                    let title = titles[index]
+                    guard !used.contains(index), !title.isEmpty, !field.rejects(title) else { return false }
+                    return field.hints.contains { hint in
+                        let h = TextMatching.normalize(hint)
+                        return exact ? title == h : title.contains(h)
+                    }
+                }
+                if let hit {
+                    mapping[field] = hit
+                    used.insert(hit)
+                }
             }
-            if let hit {
-                mapping[field] = hit.offset
-                used.insert(hit.offset)
-            }
+        }
+        return mapping
+    }
+
+    /// Wie oben, schaut aber auch in die Zeilen. Heisst die Namensspalte ganz anders als
+    /// erwartet, ist es die freie Spalte mit den längsten Texten. Ohne Namen fiele sonst
+    /// jede Zeile weg, und die ganze Liste sähe leer aus.
+    static func guessMapping(table: CSV.Table) -> [Field: Int] {
+        var mapping = guessMapping(header: table.header)
+        guard mapping[.name] == nil else { return mapping }
+
+        let used = Set(mapping.values)
+        let width = max(table.header.count, table.rows.map(\.count).max() ?? 0)
+        func averageText(_ col: Int) -> Double {
+            let values = table.rows.map { table.value($0, at: col) }.filter { $0.contains(where: \.isLetter) }
+            return values.isEmpty ? 0 : Double(values.reduce(0) { $0 + $1.count }) / Double(values.count)
+        }
+        if let col = (0..<width).filter({ !used.contains($0) }).max(by: { averageText($0) < averageText($1) }),
+           averageText(col) > 0 {
+            mapping[.name] = col
         }
         return mapping
     }
@@ -103,7 +140,7 @@ enum WineImport {
         var summaryLine: String {
             var parts: [String] = []
             if !vintage.isEmpty { parts.append(vintage) }
-            parts.append(count == 1 ? "1 Flasche" : "\(count) Flaschen")
+            parts.append(count == 0 ? "keine Flasche mehr" : count == 1 ? "1 Flasche" : "\(count) Flaschen")
             if let price { parts.append("CHF " + String(format: price == price.rounded() ? "%.0f" : "%.2f", price)) }
             if !region.isEmpty { parts.append(region) }
             return parts.joined(separator: " · ")
@@ -115,12 +152,21 @@ enum WineImport {
         table.rows.enumerated().compactMap { index, row in
             let name = table.value(row, at: mapping[.name]).trimmingCharacters(in: .whitespaces)
             guard !name.isEmpty else { return nil }
+            // Ohne Spalte für die Art steht sie oft im Namen: „Cos d'Estournel (White)".
+            let typeText = mapping[.type] != nil ? table.value(row, at: mapping[.type])
+                                                 : FreeTextList.wineType(in: name) ?? ""
+            // „Bordeaux, France" statt nur „France" — am Gebiet hängt das Trinkfenster.
+            var places: [String] = []
+            for text in [table.value(row, at: mapping[.area]), table.value(row, at: mapping[.region])]
+                where !text.isEmpty && !places.contains(where: { $0.caseInsensitiveCompare(text) == .orderedSame }) {
+                places.append(text)
+            }
             return Draft(
                 name: name,
                 producer: table.value(row, at: mapping[.producer]),
                 vintage: vintage(from: table.value(row, at: mapping[.vintage])),
-                type: wineType(from: table.value(row, at: mapping[.type])),
-                region: table.value(row, at: mapping[.region]),
+                type: wineType(from: typeText),
+                region: places.joined(separator: ", "),
                 grape: table.value(row, at: mapping[.grape]),
                 price: price(from: table.value(row, at: mapping[.price])),
                 note: table.value(row, at: mapping[.note]),
@@ -184,7 +230,9 @@ enum WineImport {
 
             let place = resolvePlace(draft: draft, fridges: fridges)
 
-            for index in 0..<max(1, draft.count) {
+            // 0 Flaschen = schon ausgetrunken. Der Wein kommt trotzdem mit — samt Notiz
+            // („nicht mehr kaufen"), genau wie nach „Trinken" in der App.
+            for index in 0..<max(0, draft.count) {
                 let bottle = Bottle(wine: wine, shelf: nil, slot: 0)
                 // Nur die erste Flasche bekommt den Platz aus der Liste — in einem Fach
                 // steht eine Flasche. Die weiteren wandern in „noch einräumen".
@@ -206,7 +254,7 @@ enum WineImport {
 
     static func bottleCount(raw: String) -> Int {
         guard !raw.isEmpty, let n = Int(raw.filter(\.isNumber)) else { return 1 }
-        return max(1, min(n, 200))   // Tippfehler in der Tabelle sollen nicht 9999 Flaschen anlegen
+        return min(n, 200)   // Tippfehler in der Tabelle sollen nicht 9999 Flaschen anlegen
     }
 
     /// Vierstellige Jahreszahl aus einem Feld wie „2018" oder „Jahrgang 2018".

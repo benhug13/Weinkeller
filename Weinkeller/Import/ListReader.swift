@@ -151,8 +151,8 @@ enum ListReader {
         guard !rows.isEmpty else { return CSV.Table(header: [], rows: []) }
 
         // Kopfzeile unter einem Titel („Weinkeller Inventar 2024") suchen: die erste Zeile
-        // unter den obersten fünf, in der mindestens zwei Spaltennamen stehen.
-        if let headerIndex = rows.prefix(5).firstIndex(where: { hintCount($0) >= 2 && !$0.contains(where: isNumericCell) }) {
+        // unter den obersten zehn, in der mindestens zwei Spaltennamen stehen.
+        if let headerIndex = rows.prefix(10).firstIndex(where: { hintCount($0) >= 2 && !$0.contains(where: isNumericCell) }) {
             rows.removeFirst(headerIndex)
             return dropEmptyColumns(CSV.Table(header: rows[0], rows: Array(rows.dropFirst())))
         }
