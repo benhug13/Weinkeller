@@ -150,8 +150,8 @@ struct SlotWalkView: View {
                 }
                 VStack(alignment: .leading, spacing: 2) {
                     Text(ref.fridgeName)
-                        .font(.system(size: 14))
-                        .foregroundStyle(Theme.muted)
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(fridges.count > 1 ? Theme.wineLit : Theme.muted)
                     Text(ref.shortLabel)
                         .font(Theme.serif(30))
                         .foregroundStyle(Theme.cream)
@@ -376,6 +376,9 @@ struct GuidedPlacingView: View {
                 }
                 if let bottle = currentBottle, let slot = currentSlot, let wine = bottle.wine {
                     progress
+                    if let change = fridgeChange {
+                        fridgeChangeCard(from: change.from, to: change.to)
+                    }
                     bottleCard(wine)
                     Image(systemName: "arrow.down")
                         .font(.system(size: 18, weight: .semibold))
@@ -425,6 +428,34 @@ struct GuidedPlacingView: View {
         }
     }
 
+    /// Geht es im nächsten Kühlschrank weiter, soll man das nicht übersehen — sonst sucht man
+    /// „Regal 1 · Fach 1" im falschen Gerät. Der Name über dem Fach allein ist zu leise.
+    private var fridgeChange: (from: String, to: String)? {
+        guard let slot = currentSlot, let fridge = slot.shelf.fridge else { return nil }
+        let previous: Fridge? = slotIndex > 0 ? slots[slotIndex - 1].shelf.fridge : fridges.first
+        guard let previous, previous.persistentModelID != fridge.persistentModelID else { return nil }
+        return (previous.name, fridge.name)
+    }
+
+    private func fridgeChangeCard(from: String, to: String) -> some View {
+        Card {
+            HStack(spacing: 12) {
+                Image(systemName: "arrow.right.circle.fill")
+                    .font(.system(size: 24))
+                    .foregroundStyle(Theme.wineLit)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("\(from) ist voll")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(Theme.cream)
+                    Text("Ab jetzt kommen die Flaschen in **\(to)**.")
+                        .font(.system(size: 13))
+                        .foregroundStyle(Theme.muted)
+                }
+                Spacer(minLength: 0)
+            }
+        }
+    }
+
     private func bottleCard(_ wine: Wine) -> some View {
         Card {
             HStack(spacing: 14) {
@@ -449,8 +480,8 @@ struct GuidedPlacingView: View {
             VStack(alignment: .leading, spacing: 10) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(ref.fridgeName)
-                        .font(.system(size: 14))
-                        .foregroundStyle(Theme.muted)
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(fridges.count > 1 ? Theme.wineLit : Theme.muted)
                     Text(ref.shortLabel)
                         .font(Theme.serif(30))
                         .foregroundStyle(Theme.cream)
@@ -488,6 +519,12 @@ struct GuidedPlacingView: View {
         bottleIndex = 0
         slotIndex = 0
         history = []
+        #if DEBUG
+        // Für Screenshots mitten im Ablauf: SIMCTL_CHILD_WEINKELLER_GUIDED_AT=40 (z. B. Wechsel in Kühlschrank 2)
+        if let at = ProcessInfo.processInfo.environment["WEINKELLER_GUIDED_AT"].flatMap(Int.init) {
+            slotIndex = min(max(0, at), slots.count)
+        }
+        #endif
     }
 
     private func place() {
