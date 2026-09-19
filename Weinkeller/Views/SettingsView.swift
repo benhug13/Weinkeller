@@ -18,6 +18,7 @@ struct SettingsView: View {
     @State private var importing = false
     @State private var alert: String?
     @State private var confirmingReset = false
+    @State private var exportFile: SharedFile?
 
     private var backdrop: Backdrop { Backdrop(rawValue: backdropRaw) ?? .schlicht }
     private var appearance: Appearance { Appearance(rawValue: appearanceRaw) ?? .schwarz }
@@ -36,6 +37,7 @@ struct SettingsView: View {
                     fridgeSection
                     listSection
                     priceSection
+                    backupSection
                     statsSection
                     resetSection
                     aboutSection
@@ -46,6 +48,17 @@ struct SettingsView: View {
             .scrollContentBackground(.hidden)
             .toolbar(.hidden, for: .navigationBar)
             .sheet(isPresented: $importing) { ImportView() }
+            .sheet(item: $exportFile) { file in ShareSheet(items: [file.url]).ignoresSafeArea() }
+            #if DEBUG
+            // Tabelle ohne Teilen-Fenster prüfen: SIMCTL_CHILD_WEINKELLER_EXPORT_TO=/pfad/keller.xlsx
+            .task {
+                if let path = ProcessInfo.processInfo.environment["WEINKELLER_EXPORT_TO"],
+                   let url = try? CellarExport.file(wines: wines) {
+                    try? FileManager.default.removeItem(atPath: path)
+                    try? FileManager.default.copyItem(at: url, to: URL(fileURLWithPath: path))
+                }
+            }
+            #endif
             .alert("Geht nicht",
                    isPresented: Binding(get: { alert != nil }, set: { if !$0 { alert = nil } })) {
                 Button("Verstanden", role: .cancel) { alert = nil }
@@ -298,6 +311,32 @@ struct SettingsView: View {
     // MARK: - Preise
 
     private var winesWithoutPrice: Int { wines.filter { ($0.price ?? 0) <= 0 }.count }
+    private var winesWithPrice: Int { wines.filter { ($0.price ?? 0) > 0 && !$0.bottlesInCellar.isEmpty }.count }
+
+    /// Eine Zeile in den Einstellungen: Symbol, Titel, Erklärung, Pfeil.
+    private func settingsRow(icon: String, title: String, text: String) -> some View {
+        Card {
+            HStack(spacing: 13) {
+                Image(systemName: icon)
+                    .font(.system(size: 18))
+                    .foregroundStyle(Theme.wineLit)
+                    .frame(width: 26)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(title)
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(Theme.cream)
+                    Text(text)
+                        .font(.system(size: 12))
+                        .foregroundStyle(Theme.muted)
+                        .multilineTextAlignment(.leading)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(Theme.mutedDim)
+            }
+        }
+    }
 
     private var priceSection: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -328,6 +367,49 @@ struct SettingsView: View {
                 }
             }
             .buttonStyle(.plain)
+
+            if winesWithPrice > 0 {
+                NavigationLink { PriceUpdateView() } label: {
+                    settingsRow(icon: "arrow.triangle.2.circlepath",
+                                title: "Preise nochmals prüfen",
+                                text: "Schaut bei \(winesWithPrice) \(winesWithPrice == 1 ? "Wein" : "Weinen") nach, ob der Preis gestiegen oder gesunken ist. Du entscheidest bei jedem.")
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+
+    // MARK: - Sichern
+
+    private var backupSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            SectionLabel(text: "Sichern")
+            Button { export() } label: {
+                settingsRow(icon: "square.and.arrow.up",
+                            title: "Als Excel-Tabelle speichern",
+                            text: "Alle Weine mit Anzahl, Plätzen, Preisen und Notizen — für den Computer, zum Weitergeben oder als Sicherung.")
+            }
+            .buttonStyle(.plain)
+            .disabled(wines.isEmpty)
+
+            HStack(alignment: .top, spacing: 8) {
+                Image(systemName: WeinkellerApp.usesICloud ? "checkmark.icloud.fill" : "exclamationmark.icloud")
+                    .foregroundStyle(WeinkellerApp.usesICloud ? Theme.wineLit : Theme.typeSuess)
+                Text(WeinkellerApp.usesICloud
+                     ? "Dein Keller wird automatisch in deinem iCloud gesichert. Er bleibt bei App- und iOS-Updates erhalten und ist auf einem neuen iPhone wieder da."
+                     : "iCloud ist auf diesem iPhone nicht aktiv — der Keller liegt nur hier. Er bleibt bei Updates erhalten, aber speichere ab und zu eine Excel-Tabelle als Sicherung.")
+                    .font(.system(size: 12))
+                    .foregroundStyle(Theme.muted)
+            }
+            .padding(.horizontal, 4)
+        }
+    }
+
+    private func export() {
+        do {
+            exportFile = SharedFile(url: try CellarExport.file(wines: wines))
+        } catch {
+            alert = "Die Tabelle konnte nicht erstellt werden: \(error.localizedDescription)"
         }
     }
 

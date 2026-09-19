@@ -76,6 +76,20 @@ enum VinelloAPI {
                                            "region": region, "fast": fastOnly])
     }
 
+    /// Gratis-Kontingent der schnellen Preissuche (Tavily): pro Monat, pro Wein 2 Suchen.
+    struct Usage: Decodable {
+        var used: Int
+        var limit: Int
+        var perWine: Int
+
+        var left: Int { max(0, limit - used) }
+        var share: Double { limit > 0 ? min(1, Double(used) / Double(limit)) : 0 }
+    }
+
+    static func usage() async throws -> Usage {
+        try await post("api/usage", body: [:])
+    }
+
     // MARK: - Netz
 
     private struct ErrorBody: Decodable { var error: String?; var retryAfter: Double? }

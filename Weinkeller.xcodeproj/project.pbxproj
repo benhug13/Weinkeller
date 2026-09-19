@@ -8,12 +8,14 @@
 
 /* Begin PBXBuildFile section */
 		035F39F749787BA708B99584 /* GlassTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EB50D246463D5AD0C4527FA /* GlassTabBar.swift */; };
+		05C97E84D5CB4A20A5506C13 /* PriceUpdateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BBE7A00AF4A189401D3D40C /* PriceUpdateView.swift */; };
 		07C0420E623CF887B839BEBC /* ZipArchive.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1D9A1087CD6EF4390316AA /* ZipArchive.swift */; };
 		07CB75D778C7019511D091F2 /* ListReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BE264EC06755DE0937AEFB3 /* ListReader.swift */; };
 		10B409C39D91AB8740260F2D /* Cards.swift in Sources */ = {isa = PBXBuildFile; fileRef = B187083F2A42DFA46A58E95D /* Cards.swift */; };
 		1BC8DDD955E0DDA80C1CB311 /* DrinkWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7072170A8B2C96377555C732 /* DrinkWindow.swift */; };
 		2112C87E6C10ADEA67B42731 /* FridgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F985B63BAACDA13EED72FBCD /* FridgeView.swift */; };
 		2A3096C535D94ADFD5F9F845 /* CatalogWine.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFD845DC680D2D7E30BA0679 /* CatalogWine.swift */; };
+		2B4479DEC9E2BD7FCB5B7DE8 /* CellarExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CFD709241CBE85B1977D74F /* CellarExport.swift */; };
 		2CF1E4FCED606AA6629B3E53 /* WineDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23FDE5669D3B4E91FDAADAD3 /* WineDetailView.swift */; };
 		2E295A6793CB4070A14BE33F /* WineImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515A69D54A6A9A4D4CAC6F1B /* WineImport.swift */; };
 		487B143F92B7B19BEC3A9189 /* TextMatching.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D51EA3DC409205D8CB5720 /* TextMatching.swift */; };
@@ -45,6 +47,7 @@
 		C40C8DD929B0C1827D9CC2F9 /* DebugSeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595D7590A93753EAB687F6D1 /* DebugSeed.swift */; };
 		C5DDDEB444E4CF777B129747 /* ScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCF7DD3E99CDC096EDE227C1 /* ScannerView.swift */; };
 		C68B8C92CD357CACF9C4F3D9 /* PlacePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1E6EBC0FD77F4E878755790 /* PlacePicker.swift */; };
+		C97A23584330D077556DB51C /* XLSXWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BADF420F092C468F9693B0BE /* XLSXWriter.swift */; };
 		CE7E9FF1CC7966D98B18F940 /* FreshStart.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D87F0B20D267E1236F2E2D /* FreshStart.swift */; };
 		D02A5F2954A18F9B45E9C022 /* CSV.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E79D6C866989C271F01D110 /* CSV.swift */; };
 		D6F85749F8F1516A5B3D23B9 /* FreeTextList.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1BC51DEABB531286C10FA6A /* FreeTextList.swift */; };
@@ -64,6 +67,7 @@
 		05C7E7ECC09D3C791C9FF560 /* VinelloAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VinelloAPI.swift; sourceTree = "<group>"; };
 		1765379619C6A406D14A6E99 /* CameraPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPicker.swift; sourceTree = "<group>"; };
 		1A4AE2EBBF1A0851A29AA945 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		1BBE7A00AF4A189401D3D40C /* PriceUpdateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceUpdateView.swift; sourceTree = "<group>"; };
 		1EB50D246463D5AD0C4527FA /* GlassTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassTabBar.swift; sourceTree = "<group>"; };
 		206050DD900C37A1C44ACADA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		23FDE5669D3B4E91FDAADAD3 /* WineDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WineDetailView.swift; sourceTree = "<group>"; };
@@ -86,6 +90,7 @@
 		7918C0E4C438AB11BE23C3D9 /* BarAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarAppearance.swift; sourceTree = "<group>"; };
 		8802FBFB82D3CDEE0B55F3F0 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		88A3ABECB8BEC85442714566 /* Bottle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bottle.swift; sourceTree = "<group>"; };
+		8CFD709241CBE85B1977D74F /* CellarExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellarExport.swift; sourceTree = "<group>"; };
 		8D43A841C6E2D55D5DBF1E18 /* Wordmark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Wordmark.swift; sourceTree = "<group>"; };
 		945723578E862123CB8AD0ED /* Glass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glass.swift; sourceTree = "<group>"; };
 		98A3F817B3F74BAE5A46A6E5 /* ThemeTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeTile.swift; sourceTree = "<group>"; };
@@ -102,6 +107,7 @@
 		B0748562AA076243A54A4D6D /* DOCXReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DOCXReader.swift; sourceTree = "<group>"; };
 		B187083F2A42DFA46A58E95D /* Cards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cards.swift; sourceTree = "<group>"; };
 		B721A03A8142C5E0C2EEAB40 /* WineType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WineType.swift; sourceTree = "<group>"; };
+		BADF420F092C468F9693B0BE /* XLSXWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XLSXWriter.swift; sourceTree = "<group>"; };
 		C26C54532487D790459240CE /* catalog.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = catalog.json; sourceTree = "<group>"; };
 		CCF7DD3E99CDC096EDE227C1 /* ScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerView.swift; sourceTree = "<group>"; };
 		D1BC51DEABB531286C10FA6A /* FreeTextList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeTextList.swift; sourceTree = "<group>"; };
@@ -115,6 +121,15 @@
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		491F7691137AD17078CDCFC9 /* Export */ = {
+			isa = PBXGroup;
+			children = (
+				8CFD709241CBE85B1977D74F /* CellarExport.swift */,
+				BADF420F092C468F9693B0BE /* XLSXWriter.swift */,
+			);
+			path = Export;
+			sourceTree = "<group>";
+		};
 		598E1AD01013E2644C6622F3 /* Weinkeller */ = {
 			isa = PBXGroup;
 			children = (
@@ -123,6 +138,7 @@
 				98D35BEA87BD4A8466894BDE /* WeinkellerApp.swift */,
 				5F1216B25DA789142B496EC3 /* Catalog */,
 				D1D9222A265A16B0713E5F7B /* Design */,
+				491F7691137AD17078CDCFC9 /* Export */,
 				89C2BB229AF238BB1ED1EB6F /* Import */,
 				FA7F9154C944E5D0593A6350 /* Models */,
 				A14EFABAE2A8F60D6D69B475 /* Scanner */,
@@ -234,6 +250,7 @@
 				A1E6EBC0FD77F4E878755790 /* PlacePicker.swift */,
 				36227F926AF8C83FB76863F8 /* PlacingAssistant.swift */,
 				EA855165DC4D70DDD1DC09FE /* PriceLookupView.swift */,
+				1BBE7A00AF4A189401D3D40C /* PriceUpdateView.swift */,
 				486F76639A01379C1CE1BC7D /* RootView.swift */,
 				5A46C0BAF6F35E6CA510E50D /* SettingsView.swift */,
 				39AFF5A4673BCC251AD60D1E /* UnplacedView.swift */,
@@ -322,6 +339,7 @@
 				ED64E17C236E551E981ED475 /* CameraPicker.swift in Sources */,
 				10B409C39D91AB8740260F2D /* Cards.swift in Sources */,
 				2A3096C535D94ADFD5F9F845 /* CatalogWine.swift in Sources */,
+				2B4479DEC9E2BD7FCB5B7DE8 /* CellarExport.swift in Sources */,
 				94021BA0B60CBF4E78F35CF7 /* Controls.swift in Sources */,
 				F0E053024C0CBF5EBCE430DB /* DOCXReader.swift in Sources */,
 				C40C8DD929B0C1827D9CC2F9 /* DebugSeed.swift in Sources */,
@@ -340,6 +358,7 @@
 				C68B8C92CD357CACF9C4F3D9 /* PlacePicker.swift in Sources */,
 				66B984A342AB01280C8D98F7 /* PlacingAssistant.swift in Sources */,
 				F6A4A46329AFF58E0DD22372 /* PriceLookupView.swift in Sources */,
+				05C97E84D5CB4A20A5506C13 /* PriceUpdateView.swift in Sources */,
 				C0B1A60C37DEA6DE9C961BC1 /* RootView.swift in Sources */,
 				64FA90472EA2439E1B47441F /* ScanFlowView.swift in Sources */,
 				C5DDDEB444E4CF777B129747 /* ScannerView.swift in Sources */,
@@ -360,6 +379,7 @@
 				4DB46C30465F01391B5578EB /* WineType.swift in Sources */,
 				F90874809E7CC8100D0DBA74 /* Wordmark.swift in Sources */,
 				81A3401A42FF7245D76F54D2 /* XLSXReader.swift in Sources */,
+				C97A23584330D077556DB51C /* XLSXWriter.swift in Sources */,
 				07C0420E623CF887B839BEBC /* ZipArchive.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -5,6 +5,10 @@ import SwiftData
 struct WeinkellerApp: App {
     let container: ModelContainer
 
+    /// Läuft die Datenbank über iCloud? Die Einstellungen sagen es dem Besitzer ehrlich —
+    /// ohne iCloud liegt der Keller nur auf diesem iPhone.
+    static private(set) var usesICloud = false
+
     @AppStorage("appearance") private var appearanceRaw = Appearance.schwarz.rawValue
     private var appearance: Appearance { Appearance(rawValue: appearanceRaw) ?? .schwarz }
 
@@ -19,6 +23,7 @@ struct WeinkellerApp: App {
             for: schema,
             configurations: ModelConfiguration(schema: schema, cloudKitDatabase: .automatic)) {
             container = cloud
+            Self.usesICloud = true
         } else if let local = try? ModelContainer(
             for: schema,
             configurations: ModelConfiguration(schema: schema, cloudKitDatabase: .none)) {

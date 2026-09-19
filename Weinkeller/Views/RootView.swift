@@ -116,6 +116,8 @@ struct DebugScreen: View {
                 UnplacedView()
             case "walk":
                 SlotWalkView()
+            case "priceupdate":
+                PriceUpdateView()
             case "guided":
                 GuidedPlacingView()
             case "prices":

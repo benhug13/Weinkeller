@@ -285,7 +285,13 @@ struct PriceBatchView: View {
                 for (i, wine) in lane.enumerated() {
                     let (n, p, v, r) = (wine.name, wine.producer, wine.vintage, wine.region)
                     group.addTask {
-                        do { return (i, .success(try await VinelloAPI.findPrice(name: n, producer: p, vintage: v, region: r, fastOnly: true))) }
+                        // ⚠️ Erst in eine eigene Konstante warten, dann das Tupel bauen. Steht `try await`
+                        // mitten im Tupel, kam mit Swift 6.4 bei Erfolg immer Nummer 0 zurück — und der
+                        // Preis landete beim falschen Wein (gemessen 19.09.2026).
+                        do {
+                            let found = try await VinelloAPI.findPrice(name: n, producer: p, vintage: v, region: r, fastOnly: true)
+                            return (i, .success(found))
+                        }
                         catch { return (i, .failure(error)) }
                     }
                 }
