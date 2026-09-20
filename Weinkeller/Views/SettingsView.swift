@@ -15,6 +15,10 @@ struct SettingsView: View {
 
     @AppStorage("onboarded") private var onboarded = false
 
+    /// Immer nur **ein** Lagerort offen. Bei drei Kühlschränken sind sonst
+    /// fünfzehn Regalzeilen untereinander, und man sucht seins.
+    @State private var openFridge: PersistentIdentifier?
+
     @State private var importing = false
     @State private var alert: String?
     @State private var confirmingReset = false
@@ -172,12 +176,12 @@ struct SettingsView: View {
         }
     }
 
-    // MARK: - Kühlschränke
+    // MARK: - Lagerorte
 
     private var fridgeSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            SectionLabel(text: "Kühlschränke")
-            Text("Stell die Regale so ein, wie sie wirklich im Gerät sind. Ein Fach ist ein Platz für eine Flasche.")
+            SectionLabel(text: "Lagerorte")
+            Text("Kühlschrank, Regal oder Kiste — stell die Ebenen so ein, wie sie wirklich dastehen. Ein Fach ist ein Platz für eine Flasche.")
                 .font(.system(size: 12))
                 .foregroundStyle(Theme.mutedDim)
                 .padding(.bottom, 2)
@@ -186,49 +190,121 @@ struct SettingsView: View {
                 fridgeCard(fridge)
             }
 
-            SecondaryButton(title: "Kühlschrank hinzufügen", systemImage: "plus", action: addFridge)
+            SecondaryButton(title: "Lagerort hinzufügen", systemImage: "plus", action: addFridge)
         }
+    }
+
+    /// Bei genau einem Lagerort gibt es nichts zu sortieren — der ist immer offen.
+    private func isOpen(_ fridge: Fridge) -> Bool {
+        fridges.count == 1 || openFridge == fridge.persistentModelID
     }
 
     private func fridgeCard(_ fridge: Fridge) -> some View {
         let capacity = fridge.sortedShelves.reduce(0) { $0 + $1.slots }
+        let open = isOpen(fridge)
 
         return Card(padding: 0) {
             VStack(spacing: 0) {
-                HStack {
-                    TextField("Name", text: Binding(
-                        get: { fridge.name },
-                        set: { fridge.name = $0.isEmpty ? "Kühlschrank" : $0 }))
-                        .font(Theme.serif(19))
-                        .foregroundStyle(Theme.cream)
-                    Spacer()
-                    Text("\(fridge.bottleCount) / \(capacity)")
-                        .font(.system(size: 13).monospacedDigit())
-                        .foregroundStyle(Theme.muted)
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 13)
-
-                Rectangle().fill(.white.opacity(0.07)).frame(height: 0.7)
-
-                ForEach(fridge.sortedShelves) { shelf in
-                    shelfRow(shelf, in: fridge)
-                    Rectangle().fill(.white.opacity(0.07)).frame(height: 0.7).padding(.leading, 16)
+                if open {
+                    fridgeHeader(fridge, capacity: capacity, open: true)
+                } else {
+                    Button {
+                        withAnimation(.snappy(duration: 0.22)) { openFridge = fridge.persistentModelID }
+                    } label: {
+                        fridgeHeader(fridge, capacity: capacity, open: false)
+                    }
+                    .buttonStyle(.plain)
                 }
 
-                HStack(spacing: 18) {
-                    Button("Regal hinzufügen") { addShelf(to: fridge) }
-                        .font(.system(size: 14))
-                        .foregroundStyle(Theme.wineLit)
-                    Spacer()
-                    Button("Löschen") { deleteFridge(fridge) }
-                        .font(.system(size: 14))
-                        .foregroundStyle(Color(hex: 0xD1687E))
+                if open {
+                    Rectangle().fill(.white.opacity(0.07)).frame(height: 0.7)
+
+                    StorageKindPicker(kind: Binding(
+                        get: { fridge.kind },
+                        set: { fridge.changeKind(to: $0); try? context.save() }))
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+
+                    Rectangle().fill(.white.opacity(0.07)).frame(height: 0.7)
+
+                    ForEach(fridge.sortedShelves) { shelf in
+                        shelfRow(shelf, in: fridge)
+                        Rectangle().fill(.white.opacity(0.07)).frame(height: 0.7).padding(.leading, 16)
+                    }
+
+                    HStack(spacing: 18) {
+                        Button("\(fridge.kind.levelWord) hinzufügen") { addShelf(to: fridge) }
+                            .font(.system(size: 14))
+                            .foregroundStyle(Theme.wineLit)
+                        Spacer()
+                        Button("Löschen") { deleteFridge(fridge) }
+                            .font(.system(size: 14))
+                            .foregroundStyle(Color(hex: 0xD1687E))
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 13)
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 13)
             }
         }
+    }
+
+    /// Zugeklappt steht hier alles, was man zum Wiedererkennen braucht: Art, Name,
+    /// wie voll er ist. Offen wird aus dem Namen ein Feld — an derselben Stelle,
+    /// damit die Karte beim Aufklappen nicht springt.
+    @ViewBuilder
+    private func fridgeHeader(_ fridge: Fridge, capacity: Int, open: Bool) -> some View {
+        VStack(alignment: .leading, spacing: 7) {
+            HStack(spacing: 9) {
+                Image(systemName: fridge.kind.symbol)
+                    .font(.system(size: 13))
+                    .foregroundStyle(Theme.wineLit)
+                    .frame(width: 18)
+
+                if open {
+                    TextField("Name", text: Binding(
+                        get: { fridge.name },
+                        set: { fridge.name = $0.isEmpty ? fridge.kind.defaultName : $0 }))
+                        .font(Theme.serif(19))
+                        .foregroundStyle(Theme.cream)
+                } else {
+                    Text(fridge.name)
+                        .font(Theme.serif(19))
+                        .foregroundStyle(Theme.cream)
+                        .lineLimit(1)
+                }
+
+                Spacer(minLength: 8)
+
+                Text("\(fridge.bottleCount) / \(capacity)")
+                    .font(.system(size: 13).monospacedDigit())
+                    .foregroundStyle(Theme.muted)
+
+                if fridges.count > 1 {
+                    Button {
+                        withAnimation(.snappy(duration: 0.22)) {
+                            openFridge = open ? nil : fridge.persistentModelID
+                        }
+                    } label: {
+                        Image(systemName: "chevron.down")
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(Theme.mutedDim)
+                            .rotationEffect(.degrees(open ? 180 : 0))
+                            .frame(width: 24, height: 24)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+
+            if !open {
+                Text("\(fridge.sortedShelves.count) \(fridge.kind.levelWordPlural) · \(max(0, capacity - fridge.bottleCount)) Fächer frei")
+                    .font(.system(size: 12))
+                    .foregroundStyle(Theme.mutedDim)
+                    .padding(.leading, 27)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 13)
+        .contentShape(Rectangle())
     }
 
     private func shelfRow(_ shelf: Shelf, in fridge: Fridge) -> some View {
@@ -509,7 +585,7 @@ struct SettingsView: View {
 
     private func addShelf(to fridge: Fridge) {
         let count = fridge.sortedShelves.count
-        let shelf = Shelf(name: "Regal \(count + 1)", slots: 8, order: count)
+        let shelf = Shelf(name: "\(fridge.kind.levelWord) \(count + 1)", slots: 8, order: count)
         shelf.fridge = fridge
         context.insert(shelf)
         try? context.save()
@@ -525,12 +601,16 @@ struct SettingsView: View {
     }
 
     private func addFridge() {
-        let fridge = Fridge(name: "Kühlschrank \(fridges.count + 1)", order: fridges.count)
+        // Die Art des zuletzt angelegten Orts weiterführen — siehe OnboardingView.
+        let kind = fridges.last?.kind ?? .fridge
+        let fridge = Fridge(name: "\(kind.defaultName) \(fridges.count + 1)", order: fridges.count, kind: kind)
         context.insert(fridge)
-        let shelf = Shelf(name: "Regal 1", slots: 8, order: 0)
+        let shelf = Shelf(name: "\(kind.levelWord) 1", slots: 8, order: 0)
         shelf.fridge = fridge
         context.insert(shelf)
         try? context.save()
+        // Wer gerade einen Ort angelegt hat, will ihn einstellen — nicht erst suchen.
+        openFridge = fridge.persistentModelID
     }
 
     private func deleteFridge(_ fridge: Fridge) {
@@ -538,6 +618,7 @@ struct SettingsView: View {
             alert = "In \(fridge.name) stehen noch \(fridge.bottleCount) Flaschen. Lager sie zuerst um."
             return
         }
+        if openFridge == fridge.persistentModelID { openFridge = nil }
         context.delete(fridge)
         try? context.save()
     }

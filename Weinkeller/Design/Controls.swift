@@ -85,3 +85,34 @@ struct SpecRow: View {
         }
     }
 }
+
+/// Die Art eines Lagerorts als drei Kapseln — Kühlschrank, Regal, Kiste.
+/// Drei Möglichkeiten sind zu wenige für ein Menü: offen hinlegen ist schneller
+/// als aufklappen, und man sieht sofort, dass es überhaupt eine Wahl gibt.
+struct StorageKindPicker: View {
+    @Binding var kind: StorageKind
+
+    var body: some View {
+        HStack(spacing: 7) {
+            ForEach(StorageKind.allCases) { option in
+                let active = option == kind
+                Button {
+                    kind = option
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: option.symbol)
+                            .font(.system(size: 11, weight: .medium))
+                        Text(option.label)
+                            .font(.system(size: 13))
+                    }
+                    .foregroundStyle(active ? Theme.cream : Theme.muted)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 7)
+                    .background { Capsule().fill(active ? Theme.wine : .clear) }
+                    .overlay { Capsule().strokeBorder(active ? .clear : .white.opacity(0.12), lineWidth: 0.8) }
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+}

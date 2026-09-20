@@ -132,15 +132,15 @@ struct OnboardingView: View {
         .buttonStyle(.plain)
     }
 
-    // MARK: - 3a. Kühlschränke einstellen
+    // MARK: - 3a. Lagerorte einstellen
 
     private var setup: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                Text("Deine Kühlschränke")
+                Text("Wo lagerst du?")
                     .font(.system(size: 28, weight: .bold))
                     .foregroundStyle(Theme.cream)
-                Text("Stell sie so ein, wie sie wirklich dastehen. Ein Fach ist ein Platz für eine Flasche. Ändern kannst du das jederzeit in den Einstellungen.")
+                Text("Kühlschrank, Regal oder Kiste — stell es so ein, wie es wirklich dasteht. Ein Fach ist ein Platz für eine Flasche. Ändern kannst du das jederzeit in den Einstellungen.")
                     .font(.system(size: 14))
                     .foregroundStyle(Theme.muted)
 
@@ -148,7 +148,7 @@ struct OnboardingView: View {
                     fridgeCard(fridge)
                 }
 
-                SecondaryButton(title: "Kühlschrank hinzufügen", systemImage: "plus") {
+                SecondaryButton(title: "Lagerort hinzufügen", systemImage: "plus") {
                     addFridge()
                 }
 
@@ -162,9 +162,13 @@ struct OnboardingView: View {
     private func fridgeCard(_ fridge: Fridge) -> some View {
         Card {
             VStack(alignment: .leading, spacing: 12) {
+                StorageKindPicker(kind: Binding(
+                    get: { fridge.kind },
+                    set: { fridge.changeKind(to: $0) }))
+
                 TextField("Name", text: Binding(
                     get: { fridge.name },
-                    set: { fridge.name = $0.isEmpty ? "Kühlschrank" : $0 }))
+                    set: { fridge.name = $0.isEmpty ? fridge.kind.defaultName : $0 }))
                     .font(Theme.serif(19))
                     .foregroundStyle(Theme.cream)
 
@@ -172,7 +176,7 @@ struct OnboardingView: View {
                     get: { fridge.sortedShelves.count },
                     set: { setShelfCount($0, for: fridge) }), in: 1...20) {
                     HStack {
-                        Text("Regale").foregroundStyle(Theme.muted)
+                        Text(fridge.kind.levelWordPlural).foregroundStyle(Theme.muted)
                         Spacer()
                         Text("\(fridge.sortedShelves.count)")
                             .font(.system(size: 15).monospacedDigit())
@@ -184,7 +188,7 @@ struct OnboardingView: View {
                     get: { fridge.sortedShelves.first?.slots ?? 8 },
                     set: { value in fridge.sortedShelves.forEach { $0.slots = value } }), in: 1...40) {
                     HStack {
-                        Text("Fächer pro Regal").foregroundStyle(Theme.muted)
+                        Text("Fächer pro \(fridge.kind.levelWord)").foregroundStyle(Theme.muted)
                         Spacer()
                         Text("\(fridge.sortedShelves.first?.slots ?? 8)")
                             .font(.system(size: 15).monospacedDigit())
@@ -226,7 +230,7 @@ struct OnboardingView: View {
                 PrimaryButton(title: "Liste einlesen", systemImage: "doc.badge.plus") {
                     importing = true
                 }
-                SecondaryButton(title: "Später — erst Kühlschränke einstellen") {
+                SecondaryButton(title: "Später — erst Lagerorte einstellen") {
                     withAnimation(.snappy) { step = .setup }
                 }
             }
@@ -254,7 +258,7 @@ struct OnboardingView: View {
         let slots = shelves.first?.slots ?? 8
         if target > shelves.count {
             for index in shelves.count..<target {
-                let shelf = Shelf(name: "Regal \(index + 1)", slots: slots, order: index)
+                let shelf = Shelf(name: "\(fridge.kind.levelWord) \(index + 1)", slots: slots, order: index)
                 shelf.fridge = fridge
                 context.insert(shelf)
             }
@@ -264,10 +268,13 @@ struct OnboardingView: View {
     }
 
     private func addFridge() {
-        let fridge = Fridge(name: "Kühlschrank \(fridges.count + 1)", order: fridges.count)
+        // Die Art des zuletzt angelegten Orts weiterführen: wer zwei Regale hat,
+        // legt als zweites selten einen Kühlschrank an.
+        let kind = fridges.last?.kind ?? .fridge
+        let fridge = Fridge(name: "\(kind.defaultName) \(fridges.count + 1)", order: fridges.count, kind: kind)
         context.insert(fridge)
         for index in 0..<5 {
-            let shelf = Shelf(name: "Regal \(index + 1)", slots: 8, order: index)
+            let shelf = Shelf(name: "\(kind.levelWord) \(index + 1)", slots: 8, order: index)
             shelf.fridge = fridge
             context.insert(shelf)
         }

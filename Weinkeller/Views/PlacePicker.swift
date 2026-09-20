@@ -1,7 +1,7 @@
 import SwiftUI
 import SwiftData
 
-/// Wählt Kühlschrank, Regal und Fach. Es werden nur **freie** Fächer angeboten —
+/// Wählt Lagerort, Ebene und Fach. Es werden nur **freie** Fächer angeboten —
 /// ein belegtes Fach anzubieten wäre eine Einladung zum Fehler.
 struct PlacePicker: View {
     @Query(sort: \Fridge.order) private var fridges: [Fridge]
@@ -23,18 +23,18 @@ struct PlacePicker: View {
 
     var body: some View {
         Group {
-            Picker("Kühlschrank", selection: fridgeBinding) {
+            Picker("Ort", selection: fridgeBinding) {
                 ForEach(fridges) { Text($0.name).tag(Optional($0.persistentModelID)) }
             }
 
             if let fridge {
-                Picker("Regal", selection: shelfBinding) {
+                Picker(fridge.kind.levelWord, selection: shelfBinding) {
                     ForEach(fridge.sortedShelves) { Text($0.name).tag(Optional($0.persistentModelID)) }
                 }
             }
 
             if availableSlots.isEmpty {
-                Text("Dieses Regal ist voll. Wähl ein anderes.")
+                Text("Hier ist alles voll. Wähl einen anderen Platz.")
                     .font(.system(size: 13))
                     .foregroundStyle(Theme.muted)
             } else {

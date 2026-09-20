@@ -204,11 +204,11 @@ struct HomeView: View {
         }
     }
 
-    // MARK: - Kühlschränke
+    // MARK: - Lagerorte
 
     private var fridgeSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            SectionLabel(text: fridges.count == 1 ? "Dein Kühlschrank" : "Deine Kühlschränke")
+            SectionLabel(text: fridgeSectionTitle)
 
             ForEach(fridges) { fridge in
                 let capacity = fridge.sortedShelves.reduce(0) { $0 + $1.slots }
@@ -218,6 +218,9 @@ struct HomeView: View {
                     Card {
                         VStack(alignment: .leading, spacing: 9) {
                             HStack {
+                                Image(systemName: fridge.kind.symbol)
+                                    .font(.system(size: 12))
+                                    .foregroundStyle(Theme.mutedDim)
                                 Text(fridge.name)
                                     .font(Theme.serif(18))
                                     .foregroundStyle(Theme.cream)
@@ -230,7 +233,7 @@ struct HomeView: View {
                                     .foregroundStyle(Theme.mutedDim)
                             }
                             FillBar(ratio: capacity > 0 ? Double(fridge.bottleCount) / Double(capacity) : 0)
-                            Text("\(fridge.sortedShelves.count) Regale · \(max(0, capacity - fridge.bottleCount)) Fächer frei")
+                            Text("\(fridge.sortedShelves.count) \(fridge.kind.levelWordPlural) · \(max(0, capacity - fridge.bottleCount)) Fächer frei")
                                 .font(.system(size: 12))
                                 .foregroundStyle(Theme.mutedDim)
                         }
@@ -238,6 +241,19 @@ struct HomeView: View {
                 }
                 .buttonStyle(.plain)
             }
+        }
+    }
+
+    /// Steht nur eine Art da, soll auch ihr Wort dastehen — „Deine Lagerorte"
+    /// ist richtig, aber niemand sagt das über seine zwei Weinkühlschränke.
+    private var fridgeSectionTitle: String {
+        let kinds = Set(fridges.map(\.kind))
+        guard let only = kinds.first, kinds.count == 1 else { return "Dein Keller" }
+        if fridges.count == 1 { return "Dein \(only.label)" }
+        switch only {
+        case .fridge: return "Deine Weinkühlschränke"
+        case .rack:   return "Deine Regale"
+        case .box:    return "Deine Kisten"
         }
     }
 
