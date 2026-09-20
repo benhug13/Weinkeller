@@ -14,6 +14,7 @@
 		10B409C39D91AB8740260F2D /* Cards.swift in Sources */ = {isa = PBXBuildFile; fileRef = B187083F2A42DFA46A58E95D /* Cards.swift */; };
 		1BC8DDD955E0DDA80C1CB311 /* DrinkWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7072170A8B2C96377555C732 /* DrinkWindow.swift */; };
 		2112C87E6C10ADEA67B42731 /* FridgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F985B63BAACDA13EED72FBCD /* FridgeView.swift */; };
+		29E1FDAD7BEE817AE10476BF /* Occasion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8877BFBE32CA91B68F4C190C /* Occasion.swift */; };
 		2A3096C535D94ADFD5F9F845 /* CatalogWine.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFD845DC680D2D7E30BA0679 /* CatalogWine.swift */; };
 		2B4479DEC9E2BD7FCB5B7DE8 /* CellarExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CFD709241CBE85B1977D74F /* CellarExport.swift */; };
 		2CF1E4FCED606AA6629B3E53 /* WineDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23FDE5669D3B4E91FDAADAD3 /* WineDetailView.swift */; };
@@ -34,6 +35,7 @@
 		8B5001711C1D9B1921BE30B9 /* ThemeTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A3F817B3F74BAE5A46A6E5 /* ThemeTile.swift */; };
 		8E1D293D052F3033BBF79378 /* PhotoListReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AF10A2886AB607EC8A488BF /* PhotoListReader.swift */; };
 		8EA641BC49CBDE75431E64E7 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8802FBFB82D3CDEE0B55F3F0 /* HomeView.swift */; };
+		901C2D071BC7025C99A07436 /* TonightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C3B81648C372F70DCF6DAC9 /* TonightView.swift */; };
 		9389B1606AFB338FA2CDF495 /* WineCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37FAFB49694BB81C753A61E6 /* WineCatalog.swift */; };
 		94021BA0B60CBF4E78F35CF7 /* Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF3B733F86F4DD71003829D /* Controls.swift */; };
 		991D91F0E7D33E750D9E1EAF /* catalog.json in Resources */ = {isa = PBXBuildFile; fileRef = C26C54532487D790459240CE /* catalog.json */; };
@@ -68,6 +70,7 @@
 		1765379619C6A406D14A6E99 /* CameraPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPicker.swift; sourceTree = "<group>"; };
 		1A4AE2EBBF1A0851A29AA945 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		1BBE7A00AF4A189401D3D40C /* PriceUpdateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceUpdateView.swift; sourceTree = "<group>"; };
+		1C3B81648C372F70DCF6DAC9 /* TonightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TonightView.swift; sourceTree = "<group>"; };
 		1EB50D246463D5AD0C4527FA /* GlassTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassTabBar.swift; sourceTree = "<group>"; };
 		206050DD900C37A1C44ACADA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		23FDE5669D3B4E91FDAADAD3 /* WineDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WineDetailView.swift; sourceTree = "<group>"; };
@@ -89,6 +92,7 @@
 		73627E832DFBDDB90CA09D43 /* Secrets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Secrets.swift; sourceTree = "<group>"; };
 		7918C0E4C438AB11BE23C3D9 /* BarAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarAppearance.swift; sourceTree = "<group>"; };
 		8802FBFB82D3CDEE0B55F3F0 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		8877BFBE32CA91B68F4C190C /* Occasion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Occasion.swift; sourceTree = "<group>"; };
 		88A3ABECB8BEC85442714566 /* Bottle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bottle.swift; sourceTree = "<group>"; };
 		8CFD709241CBE85B1977D74F /* CellarExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellarExport.swift; sourceTree = "<group>"; };
 		8D43A841C6E2D55D5DBF1E18 /* Wordmark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Wordmark.swift; sourceTree = "<group>"; };
@@ -231,6 +235,7 @@
 				7072170A8B2C96377555C732 /* DrinkWindow.swift */,
 				D8D87F0B20D267E1236F2E2D /* FreshStart.swift */,
 				66D68A122A6AA4574EA886E7 /* Fridge.swift */,
+				8877BFBE32CA91B68F4C190C /* Occasion.swift */,
 				A82D1719078F99B66D3EC345 /* Wine.swift */,
 				B721A03A8142C5E0C2EEAB40 /* WineType.swift */,
 			);
@@ -253,6 +258,7 @@
 				1BBE7A00AF4A189401D3D40C /* PriceUpdateView.swift */,
 				486F76639A01379C1CE1BC7D /* RootView.swift */,
 				5A46C0BAF6F35E6CA510E50D /* SettingsView.swift */,
+				1C3B81648C372F70DCF6DAC9 /* TonightView.swift */,
 				39AFF5A4673BCC251AD60D1E /* UnplacedView.swift */,
 				23FDE5669D3B4E91FDAADAD3 /* WineDetailView.swift */,
 				DD6B113B2A47349863AB8D40 /* WineFormView.swift */,
@@ -353,6 +359,7 @@
 				8EA641BC49CBDE75431E64E7 /* HomeView.swift in Sources */,
 				A50BC4F80824914AD5A7DA1A /* ImportView.swift in Sources */,
 				07CB75D778C7019511D091F2 /* ListReader.swift in Sources */,
+				29E1FDAD7BEE817AE10476BF /* Occasion.swift in Sources */,
 				56756128825130790D0236F3 /* OnboardingView.swift in Sources */,
 				8E1D293D052F3033BBF79378 /* PhotoListReader.swift in Sources */,
 				C68B8C92CD357CACF9C4F3D9 /* PlacePicker.swift in Sources */,
@@ -367,6 +374,7 @@
 				487B143F92B7B19BEC3A9189 /* TextMatching.swift in Sources */,
 				ABA3105C198F41D88F8988EB /* Theme.swift in Sources */,
 				8B5001711C1D9B1921BE30B9 /* ThemeTile.swift in Sources */,
+				901C2D071BC7025C99A07436 /* TonightView.swift in Sources */,
 				7070F9BA182C8069361C18CA /* UnplacedView.swift in Sources */,
 				F149AA2EA12900EF525266F6 /* VinelloAPI.swift in Sources */,
 				8A970F0354B62CAA7DD0B7B8 /* WeinkellerApp.swift in Sources */,

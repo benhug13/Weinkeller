@@ -8,6 +8,7 @@ struct HomeView: View {
     @Query private var bottles: [Bottle]
 
     @State private var scanning = false
+    @State private var tonight = false
     @State private var openBottle: Bottle?
 
     private var inCellar: [Bottle] { bottles.filter { !$0.isDrunk } }
@@ -58,6 +59,7 @@ struct HomeView: View {
             .scrollContentBackground(.hidden)
             .toolbar(.hidden, for: .navigationBar)
             .sheet(isPresented: $scanning) { ScanFlowView() }
+            .sheet(isPresented: $tonight) { TonightView() }
             .sheet(item: $openBottle) { BottleDetailView(bottle: $0) }
         }
     }
@@ -139,12 +141,21 @@ struct HomeView: View {
 
     // MARK: - Empfehlung
 
+    /// Der Vorschlag für einen gewöhnlichen Abend: trinkreif **und** aus der
+    /// günstigeren Hälfte. Vorher stand hier die erste trinkreife Flasche — das
+    /// konnte die teuerste im Keller sein, und niemand macht am Dienstag einen
+    /// 190er auf. Für alles andere gibt es den Knopf darunter.
+    private var everydayPick: Occasion.Pick? {
+        Occasion.suggest(from: inCellar, company: .twoOfUs, effort: .everyday, limit: 1).first
+    }
+
     @ViewBuilder
     private var recommendation: some View {
         VStack(alignment: .leading, spacing: 8) {
             SectionLabel(text: "Heute trinken")
 
-            if let pick = readyNow.first, let wine = pick.wine {
+            if let suggestion = everydayPick, let wine = suggestion.bottle.wine {
+                let pick = suggestion.bottle
                 Button { openBottle = pick } label: {
                     Card {
                         HStack(spacing: 14) {
@@ -159,9 +170,10 @@ struct HomeView: View {
                                     .foregroundStyle(Theme.muted)
                                 HStack(spacing: 6) {
                                     TypeDot(type: wine.type)
-                                    Text(wine.drinkStatus.label)
+                                    Text(suggestion.reason)
                                         .font(.system(size: 12))
                                         .foregroundStyle(Theme.wineLit)
+                                        .multilineTextAlignment(.leading)
                                 }
                                 Text(pick.placeLabel)
                                     .font(.system(size: 12))
@@ -181,6 +193,31 @@ struct HomeView: View {
                         .foregroundStyle(Theme.muted)
                 }
             }
+
+            Button { tonight = true } label: {
+                Card(padding: 13) {
+                    HStack(spacing: 11) {
+                        Image(systemName: "questionmark.circle")
+                            .font(.system(size: 16))
+                            .foregroundStyle(Theme.wineLit)
+                            .frame(width: 22)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Passt heute nicht?")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundStyle(Theme.cream)
+                            Text("Sag mir, mit wem du trinkst — dann such ich passend")
+                                .font(.system(size: 12))
+                                .foregroundStyle(Theme.muted)
+                                .multilineTextAlignment(.leading)
+                        }
+                        Spacer(minLength: 0)
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(Theme.mutedDim)
+                    }
+                }
+            }
+            .buttonStyle(.plain)
         }
     }
 

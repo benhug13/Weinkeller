@@ -131,6 +131,8 @@ struct DebugScreen: View {
                 OnboardingView()
             case "form":
                 WineFormView()
+            case "tonight":
+                TonightView()
             default:
                 Text("Unbekannte Ansicht: \(name)")
             }

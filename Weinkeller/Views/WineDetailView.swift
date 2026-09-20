@@ -27,10 +27,19 @@ struct WineDetailView: View {
                 specsCard
                 priceHint
                 placesCard
-                actions
             }
             .padding(18)
-            .padding(.bottom, 30)
+        }
+        // Der Knopf scrollt nicht mit: im Inhalt lag er in dem Bereich, den die
+        // Hauptansicht zur Tab-Leiste hin ausblendet — er war halb weg und man
+        // musste bis ans Ende scrollen, um ihn zu treffen.
+        .safeAreaInset(edge: .bottom) {
+            actions
+                .padding(.horizontal, 18)
+                // 38 pt wären knapp: die Hauptansicht blendet die unteren 96 pt aus
+                // und verläuft 34 pt darüber weich — der Knopf muss oberhalb davon
+                // aufhören, sonst ist er wieder halb durchsichtig.
+                .padding(.bottom, 44)
         }
         .background(AmbientBackground())
         .scrollContentBackground(.hidden)
@@ -256,7 +265,6 @@ struct WineDetailView: View {
                 askWhichBottle = true
             }
         }
-        .padding(.top, 4)
     }
 
     private var moreMenu: some View {
